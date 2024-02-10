@@ -7,16 +7,21 @@ def main():
     print("Logs from your program will appear here!")
 
     server_socket = socket.create_server(("localhost", 6379), reuse_port=True)
-    
-    client_socket, client_address = server_socket.accept() # wait for client
-    
-    with client_socket:
-        # get ping
-        received_message = client_socket.recv(1024).decode()
-        print(f"Received {received_message}")
+    server_socket.listen(5)
 
-        response_message = "+PONG\r\n"
-        client_socket.send(response_message.encode())    
+    while True:
+        # wait for client
+        client_socket, client_address = server_socket.accept()
+        
+        with client_socket:
+
+            while True:
+                # get ping
+                received_message = client_socket.recv(1024).decode()
+                print(f"Received {received_message}")
+
+                response_message = "+PONG\r\n"
+                client_socket.send(response_message.encode())    
 
 if __name__ == "__main__":
     main()
