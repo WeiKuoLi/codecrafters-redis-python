@@ -8,20 +8,23 @@ server_port = 6379      # Replace with the server's actual port number
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 print("Client socket initiated")
-
 try:
     # Connect the client socket to the server
     client_socket.connect((server_ip, server_port))
     print("Connected to server")
 
-    # Send data to the server
-    message = "*1\r\n$4\r\nping\r\n"
-    client_socket.send(message.encode())
-    print("Message sent")
-
-    # Receive data from the server
-    data = client_socket.recv(1024)
-    print("Received data from server:", data.decode())
+    for i in range(4):
+        # Send data to the server
+        message = "*1\r\n$4\r\nping\r\n"
+        try:
+            client_socket.send(message.encode())
+            print("Message sent")
+        except:
+            print("Message sent fail")
+        # Receive data from the server
+        data = client_socket.recv(1024)
+        print(f"data is {data.decode()}")
+        print("Received data from server:", data.decode())
 
 except ConnectionRefusedError:
     print("Connection refused: Server is not running or unreachable")
