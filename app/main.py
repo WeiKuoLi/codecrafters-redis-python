@@ -10,14 +10,13 @@ def main():
     
     client_socket, client_address = server_socket.accept() # wait for client
     
-    # get ping
-    received_message = client_socket.recv(1024).decode()
-    print(f"Received {received_message}")
+    with client_socket:
+        # get ping
+        received_message = client_socket.recv(1024).decode()
+        print(f"Received {received_message}")
 
-    response_message = "+PONG\r\n"
-    client_socket.send(response_message.encode())
-    client_socket.close()
-    
+        response_message = "+PONG\r\n"
+        client_socket.send(response_message.encode())    
 
 if __name__ == "__main__":
     main()
