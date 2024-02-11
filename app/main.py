@@ -107,8 +107,8 @@ class RedisIOHandler:
                     self.redis[_key] = _value
                     print(f"set {_key.typ} {_key.obj},  {_value.typ} {_value.obj} ")
                     _idx += 2
-                    if _idx + 1 < _input_obj_len and input_obj[_idx + 1].obj == "px":
-                        _ps = float(input_obj[_idx+2].obj)
+                    if _idx + 1 < _input_obj_len and input_obj.obj[_idx + 1].obj == "px":
+                        _ps = float(input_obj.obj[_idx+2].obj)
                         _idx += 2
                         asyncio.create_task(self.delete_key(_key, _ps))
                     return RedisObject(obj="OK", typ="str")
