@@ -59,17 +59,17 @@ class RedisIOHandler:
         '''
         from a root_obj return its string
         '''
-        if root_obj.type =="bulk_str":
+        if root_obj.typ =="bulk_str":
             return f"${len(root_obj.obj)}\r\n{root_obj.obj}\r\n"
-        elif root_obj.type == "str":
+        elif root_obj.typ == "str":
             return f"+{root_obj.obj}\r\n"
-        elif root_obj.type == "list":
+        elif root_obj.typ == "list":
             _root_obj_len = len(root_obj.obj)
             _str = f"*{_root_obj_len}\r\n"
             for node_obj in root_obj.obj:
                 _str += self.get_resp_string(node_obj)
             return _str
-        elif root_obj.type == "null_bulk_str":
+        elif root_obj.typ == "null_bulk_str":
             return "$-1\r\n"
         return "$-1\r\n"
 
@@ -107,8 +107,6 @@ class RedisIOHandler:
                     return RedisObject(obj="OK", typ="str")
                 elif _obj.obj =="GET" or _obj.obj =="get":
                     _key = input_obj.obj[_idx + 1]
-                    print(">>>>>>")
-                    _key.print()
                     try:
                         _value = self.redis[_key] 
                     except:
