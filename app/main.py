@@ -110,7 +110,7 @@ class RedisIOHandler:
                     try:
                         _value = self.redis[_key] 
                     except:
-                        _value = RedisObject(val="", typ="null_bulk_str")
+                        _value = RedisObject(obj="", typ="null_bulk_str")
                     _idx += 1
                     return _value
                 elif _obj.obj == "ping":
