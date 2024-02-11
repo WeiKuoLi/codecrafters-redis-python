@@ -53,7 +53,7 @@ class RedisIOHandler:
                 _node, _str = self.get_root_object(_input_string_remove_head)
                 _lst.append(_node)
                 _input_string_remove_head = _str
-            return RedisObject(obj=_lst, typ="lst"), _input_string_remove_head
+            return RedisObject(obj=_lst, typ="list"), _input_string_remove_head
 
     def get_resp_string(self, root_obj):
         '''
@@ -110,7 +110,7 @@ class RedisIOHandler:
                     try:
                         _value = self.redis[_key] 
                     except:
-                        _value = ErrorString("Null")
+                        _value = RedisObject(val="", typ="null_bulk_str")
                     _idx += 1
                     return _value
                 elif _obj.obj == "ping":
@@ -118,8 +118,7 @@ class RedisIOHandler:
                     #output_obj.append("PONG")
                 _idx += 1
             return output_obj
-        ##test
-        return RedisObject(obj="+PONG\r\n", typ="str")
+        return RedisObject(obj=[], typ="list")
     def parse_input(self, input_string):
         # *2\r\n$4\r\nECHO\r\n$3\r\nhey\r\n
         # "*1\r\n$4\r\nping\r\n"
