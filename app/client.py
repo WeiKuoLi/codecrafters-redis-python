@@ -13,17 +13,21 @@ try:
     client_socket.connect((server_ip, server_port))
     print("Connected to server")
 
-    for i in range(4):
+    while True:
         # Send data to the server
-        message = "*1\r\n$4\r\nping\r\n"
+        #message = "*4\r\n$4\r\nping\r\n$4\r\necho\r\n$3\r\vlol\r\v$4\r\nping\r\n"
+        _inp = input()
+        if(_inp != "\n"):
+            message = "\r\n".join(input().split(" "))
+        #message = "*3\r\n$4\r\nping\r\n$4\r\necho\r\n$4\r\npool\r\n"
         try:
             client_socket.send(message.encode())
-            print("Message sent")
+            print(f"Message: {message} sent")
         except:
             print("Message sent fail")
         # Receive data from the server
         data = client_socket.recv(1024)
-        print(f"data is {data.decode()}")
+        #print(f"data is {data.decode()}")
         print("Received data from server:", data.decode())
 
 except ConnectionRefusedError:

@@ -5,6 +5,9 @@ class RedisIOHandler:
         self.parsed_input = None
         self.parsed_output = None
         self.redis = {}
+    async def delete_key(self, _key):
+        await asyncio.sleep(20)
+        del self.redis[_key]
     def get_root_object(self, input_string):
         '''
         returns the root object and the rest of unparsed input_string
@@ -74,10 +77,14 @@ class RedisIOHandler:
                     _value = input_obj[_idx + 2]
                     self.redis[_key] = _value
                     _idx += 2
+                    asyncio.create_task(self.delete_key(_key))
                     return "OK"
                 elif obj =="GET" or obj =="get":
                     _key = input_obj[_idx + 1]
-                    _value = self.redis[_key] 
+                    try:
+                        _value = self.redis[_key] 
+                    except:
+                        _value = "error"
                     _idx += 1
                     return _value
                 elif obj == "ping":
