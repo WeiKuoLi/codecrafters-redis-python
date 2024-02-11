@@ -84,20 +84,20 @@ class RedisIOHandler:
         elif input_obj.type == "list":
             _input_obj_len = len(input_obj.obj)
             if (_input_obj_len == 1):
-                return self.render_output_obj(input_obj[0])
+                return self.render_output_obj(input_obj.obj[0])
             output_obj = RedisObject(obj=[], typ="list")
             _idx = 0
             while _idx < _input_obj_len:
-                _obj = input_obj[_idx]
+                _obj = input_obj.obj[_idx]
                 if _obj.type == "list":
                     output_obj.obj.append(self.render_output_obj(_obj))
                 elif _obj.obj == "ECHO" or _obj.obj =="echo":
-                    return input_obj[_idx+1]
+                    return input_obj.obj[_idx+1]
                     #output_obj.append(input_obj[_idx+1])
                     _idx += 1
                 elif _obj.obj =="SET" or _obj.obj =="set":
-                    _key = input_obj[_idx + 1]
-                    _value = input_obj[_idx + 2]
+                    _key = input_obj.obj[_idx + 1]
+                    _value = input_obj.obj[_idx + 2]
                     self.redis[_key] = _value
                     _idx += 2
                     if _idx + 1 < _input_obj_len and input_obj[_idx + 1].obj == "px":
@@ -106,7 +106,7 @@ class RedisIOHandler:
                         asyncio.create_task(self.delete_key(_key, _ps))
                     return RedisObject(obj="OK", typ="str")
                 elif _obj.obj =="GET" or _obj.obj =="get":
-                    _key = input_obj[_idx + 1]
+                    _key = input_obj.obj[_idx + 1]
                     try:
                         _value = self.redis[_key] 
                     except:
