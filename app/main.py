@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 class RedisObject:
     def __init__(self, obj, typ=None):
@@ -11,6 +12,9 @@ class RedisObject:
                 self.typ = "list"
         else:
             self.typ = typ
+       self.rdb_dir = "" 
+       self.rdb_dbfilename = "" 
+
     def print(self):
         print(f"{self.typ} object is: {self.obj} ")
     
@@ -124,6 +128,14 @@ class RedisIOHandler:
                 elif _obj.obj == "ping":
                     return RedisObject(obj="PONG", typ="str")
                     #output_obj.append("PONG")
+                elif _obj.obj == "CONFIG":
+                    _config_key =  input_obj.obj[_idx + 2]
+                    _config_val = RedisObject(self.rdb_dir) if _config_key.obj == "dir"  else  RedisObject(self.rdb_dbfilename)
+                    _output = RedisObject(obj=[])
+                    _output.obj.append(_config_key)
+                    _output.obj.append(_config_val)
+                    return _output
+                    _idx += 2
                 _idx += 1
             return output_obj
         return RedisObject(obj=[], typ="list")
@@ -168,7 +180,16 @@ async def handle_client(reader, writer, redis_handler):
     await writer.wait_closed()
 
 async def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dir", type=str, help="The directory where RDB files are stored")
+    parser.add_argument("--dbfilename", type=str, help="The name of the RDB file")
+    args = parser.parse_args()
+    
+
     redis_handler = RedisIOHandler()
+    redis_handler.rdb_dir = args.dir
+    redis_handler.rdb_dbfilename = args.dbfilename
+
     server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', 6379)
     
     async with server:
