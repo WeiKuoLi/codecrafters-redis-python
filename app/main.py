@@ -56,8 +56,8 @@ class RedisIOHandler:
             return _str
         elif isinstance(root_obj, ErrorString):
             if root_obj.string =="null":
-                return "-1\r\n"
-        return "-1\r\n"
+                return "$-1\r\n"
+        return "$-1\r\n"
 
     def render_output_obj(self, input_obj):
         if isinstance(input_obj, str):
