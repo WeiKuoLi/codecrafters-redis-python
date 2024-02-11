@@ -4,15 +4,15 @@ class RedisObject:
         self.obj = obj
         if (typ is None):
             if isinstance(obj, int):
-                self.type = "int"
+                self.typ = "int"
             elif isinstance(obj, str):
-                self.type = "str"
+                self.typ = "str"
             elif isinstance(obj, list):
-                self.type = "list"
+                self.typ = "list"
         else:
-            self.type = typ
+            self.typ = typ
     def print(self):
-        print(f"{self.type} object is: {self.obj} ")
+        print(f"{self.typ} object is: {self.obj} ")
 
 class RedisIOHandler:
     def __init__(self):
@@ -77,11 +77,11 @@ class RedisIOHandler:
         '''
         returns rendered RedisObject on the parsed_output 
         '''
-        if input_obj.type == "str" or input_obj.type == "bulk_str":
+        if input_obj.typ == "str" or input_obj.typ == "bulk_str":
             if(input_obj.obj == "ping"):
-                return RedisObject("PONG", "str")
+                return RedisObject(obj="PONG", typ="str")
             return input_obj
-        elif input_obj.type == "list":
+        elif input_obj.typ == "list":
             _input_obj_len = len(input_obj.obj)
             if (_input_obj_len == 1):
                 return self.render_output_obj(input_obj.obj[0])
@@ -89,7 +89,7 @@ class RedisIOHandler:
             _idx = 0
             while _idx < _input_obj_len:
                 _obj = input_obj.obj[_idx]
-                if _obj.type == "list":
+                if _obj.typ == "list":
                     output_obj.obj.append(self.render_output_obj(_obj))
                 elif _obj.obj == "ECHO" or _obj.obj =="echo":
                     return input_obj.obj[_idx+1]
@@ -99,6 +99,7 @@ class RedisIOHandler:
                     _key = input_obj.obj[_idx + 1]
                     _value = input_obj.obj[_idx + 2]
                     self.redis[_key] = _value
+                    print(f"set {_key.typ} {_key.obj},  {_value.typ} {_value.obj} ")
                     _idx += 2
                     if _idx + 1 < _input_obj_len and input_obj[_idx + 1].obj == "px":
                         _ps = float(input_obj[_idx+2].obj)
@@ -107,6 +108,7 @@ class RedisIOHandler:
                     return RedisObject(obj="OK", typ="str")
                 elif _obj.obj =="GET" or _obj.obj =="get":
                     _key = input_obj.obj[_idx + 1]
+                    print(f"get {_key.typ} {_key.obj}")
                     try:
                         _value = self.redis[_key] 
                     except:
