@@ -74,6 +74,7 @@ class RedisIOHandler:
                     _value = input_obj[_idx + 2]
                     self.redis[_key] = _value
                     _idx += 2
+                    return "OK"
                 elif obj =="GET" or obj =="get":
                     _key = input_obj[_idx + 1]
                     _value = self.redis[_key] 
