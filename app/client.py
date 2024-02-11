@@ -18,7 +18,7 @@ try:
         #message = "*4\r\n$4\r\nping\r\n$4\r\necho\r\n$3\r\vlol\r\v$4\r\nping\r\n"
         _inp = input()
         if(_inp != "\n"):
-            message = "\r\n".join(input().split(" "))
+            message = "\r\n".join(_inp.split(" "))
         #message = "*3\r\n$4\r\nping\r\n$4\r\necho\r\n$4\r\npool\r\n"
         try:
             client_socket.send(message.encode())
