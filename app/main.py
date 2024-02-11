@@ -12,8 +12,8 @@ class RedisObject:
                 self.typ = "list"
         else:
             self.typ = typ
-       self.rdb_dir = "" 
-       self.rdb_dbfilename = "" 
+        self.rdb_dir = "" 
+        self.rdb_dbfilename = "" 
 
     def print(self):
         print(f"{self.typ} object is: {self.obj} ")
