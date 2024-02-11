@@ -85,17 +85,17 @@ class RedisIOHandler:
             _input_obj_len = len(input_obj.obj)
             if (_input_obj_len == 1):
                 return self.render_output_obj(input_obj[0])
-            output_obj = []
+            output_obj = RedisObject(obj=[], typ="list")
             _idx = 0
             while _idx < _input_obj_len:
-                obj = input_obj[_idx]
-                if obj.type == "list":
-                    output_obj.append(self.render_output_obj(obj))
-                elif obj.obj == "ECHO" or obj.obj =="echo":
+                _obj = input_obj[_idx]
+                if _obj.type == "list":
+                    output_obj.obj.append(self.render_output_obj(_obj))
+                elif _obj.obj == "ECHO" or _obj.obj =="echo":
                     return input_obj[_idx+1]
                     #output_obj.append(input_obj[_idx+1])
                     _idx += 1
-                elif obj =="SET" or obj =="set":
+                elif _obj.obj =="SET" or _obj.obj =="set":
                     _key = input_obj[_idx + 1]
                     _value = input_obj[_idx + 2]
                     self.redis[_key] = _value
@@ -105,7 +105,7 @@ class RedisIOHandler:
                         _idx += 2
                         asyncio.create_task(self.delete_key(_key, _ps))
                     return RedisObject(obj="OK", typ="str")
-                elif obj =="GET" or obj =="get":
+                elif _obj.obj =="GET" or _obj.obj =="get":
                     _key = input_obj[_idx + 1]
                     try:
                         _value = self.redis[_key] 
@@ -113,8 +113,8 @@ class RedisIOHandler:
                         _value = ErrorString("Null")
                     _idx += 1
                     return _value
-                elif obj == "ping":
-                    return "PONG"
+                elif _obj.obj == "ping":
+                    return RedisObject(obj="PONG", typ="str")
                     #output_obj.append("PONG")
                 _idx += 1
             return output_obj
