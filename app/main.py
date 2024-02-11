@@ -1,12 +1,25 @@
 import asyncio
-class ErrorString:
-    def __init__(self, string):
-        self.string = string
+class RedisObject:
+    def __init__(self, obj, typ=None):
+        self.obj = obj
+        if (typ is None):
+            if isinstance(obj, int):
+                self.type = "int"
+            elif isinstance(obj, str):
+                self.type = "str"
+            elif isinstance(obj, list):
+                self.type = "list"
+        else:
+            self.type = typ
+    def print(self):
+        print(f"{self.type} object is: {self.obj} ")
+
 class RedisIOHandler:
     def __init__(self):
         self.parsed_input = None
         self.parsed_output = None
         self.redis = {}
+
     async def delete_key(self, _key, millisecond):
         await asyncio.sleep(millisecond / 1000)
         del self.redis[_key]
@@ -22,16 +35,16 @@ class RedisIOHandler:
         assert len(input_string.split("\r\n")) > 0
 
         if (head[0] == '+'):
-            # simple sring
+            # simple string
             _str = head[1:]
             _input_string_remove_head = "\r\n".join(input_string.split("\r\n")[1:]) + "\r\n"
-            return _str, _input_string_remove_head
+            return RedisObject(obj=_str), _input_string_remove_head
         elif (head[0] == '$'):
             # bulk string
             _str_len = int(head[1:])
             _input_string_remove_head = "\r\n".join(input_string.split("\r\n")[1:])+ "\r\n"
             _str = _input_string_remove_head[:_str_len]
-            return _str, _input_string_remove_head[_str_len + 2 :]
+            return RedisObject(obj=_str, typ="bulk_str" ), _input_string_remove_head[_str_len + 2 :]
         elif (head[0] == '*'):
             _lst = []
             _arr_len = int(head[1:])
@@ -40,41 +53,45 @@ class RedisIOHandler:
                 _node, _str = self.get_root_object(_input_string_remove_head)
                 _lst.append(_node)
                 _input_string_remove_head = _str
-            return _lst, _input_string_remove_head
+            return RedisObject(obj=_lst, typ="lst"), _input_string_remove_head
 
     def get_resp_string(self, root_obj):
         '''
         from a root_obj return its string
         '''
-        if isinstance(root_obj, str):
-            return f"${len(root_obj)}\r\n{root_obj}\r\n"
-        elif isinstance(root_obj, list):
-            _root_obj_len = len(root_obj)
+        if root_obj.type =="bulk_str":
+            return f"${len(root_obj.obj)}\r\n{root_obj.obj}\r\n"
+        elif root_obj.type == "str":
+            return f"+{root_obj.obj}\r\n"
+        elif root_obj.type == "list":
+            _root_obj_len = len(root_obj.obj)
             _str = f"*{_root_obj_len}\r\n"
-            for obj in root_obj:
-                _str += self.get_resp_string(obj)
+            for node_obj in root_obj.obj:
+                _str += self.get_resp_string(node_obj)
             return _str
-        elif isinstance(root_obj, ErrorString):
-            if root_obj.string =="null":
-                return "$-1\r\n"
+        elif root_obj.type == "null_bulk_str":
+            return "$-1\r\n"
         return "$-1\r\n"
 
     def render_output_obj(self, input_obj):
-        if isinstance(input_obj, str):
-            if(input_obj == "ping"):
+        '''
+        returns rendered RedisObject on the parsed_output 
+        '''
+        if input_obj.type == "str" or input_obj.type == "bulk_str":
+            if(input_obj.obj == "ping"):
                 return "PONG"
             return input_obj
-        elif isinstance(input_obj, list):
-            _input_obj_len = len(input_obj)
+        elif :
+            _input_obj_len = len(input_obj.obj)
             if (_input_obj_len == 1):
                 return self.render_output_obj(input_obj[0])
             output_obj = []
             _idx = 0
             while _idx < _input_obj_len:
                 obj = input_obj[_idx]
-                if isinstance(obj, list):
+                if obj.type == "list":
                     output_obj.append(self.render_output_obj(obj))
-                elif obj == "ECHO" or obj =="echo":
+                elif obj.obj == "ECHO" or obj.obj =="echo":
                     return input_obj[_idx+1]
                     #output_obj.append(input_obj[_idx+1])
                     _idx += 1
@@ -83,8 +100,8 @@ class RedisIOHandler:
                     _value = input_obj[_idx + 2]
                     self.redis[_key] = _value
                     _idx += 2
-                    if _idx + 1 < _input_obj_len and input_obj[_idx + 1] == "px":
-                        _ps = float(input_obj[_idx+2])
+                    if _idx + 1 < _input_obj_len and input_obj[_idx + 1].obj == "px":
+                        _ps = float(input_obj[_idx+2].obj)
                         _idx += 2
                         asyncio.create_task(self.delete_key(_key, _ps))
                     return "OK"
