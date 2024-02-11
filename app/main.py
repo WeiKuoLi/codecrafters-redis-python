@@ -38,7 +38,7 @@ class RedisIOHandler:
             # simple string
             _str = head[1:]
             _input_string_remove_head = "\r\n".join(input_string.split("\r\n")[1:]) + "\r\n"
-            return RedisObject(obj=_str), _input_string_remove_head
+            return RedisObject(obj=_str, typ="str"), _input_string_remove_head
         elif (head[0] == '$'):
             # bulk string
             _str_len = int(head[1:])
@@ -118,7 +118,8 @@ class RedisIOHandler:
                     #output_obj.append("PONG")
                 _idx += 1
             return output_obj
-        return RedisObject(obj=[], typ="list")
+        ##test
+        return RedisObject(obj="+PONG\r\n", typ="str")
     def parse_input(self, input_string):
         # *2\r\n$4\r\nECHO\r\n$3\r\nhey\r\n
         # "*1\r\n$4\r\nping\r\n"
