@@ -81,7 +81,7 @@ class RedisIOHandler:
             if(input_obj.obj == "ping"):
                 return "PONG"
             return input_obj
-        elif :
+        elif input_obj.type == "list":
             _input_obj_len = len(input_obj.obj)
             if (_input_obj_len == 1):
                 return self.render_output_obj(input_obj[0])
