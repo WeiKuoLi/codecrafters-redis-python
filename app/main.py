@@ -55,7 +55,7 @@ class RedisIOHandler:
                 _str += self.get_resp_string(obj)
             return _str
         elif isinstance(root_obj, ErrorString):
-            if root_obj.string =="null"
+            if root_obj.string =="null":
                 return "-1\r\n"
         return "_\r\n"
 
