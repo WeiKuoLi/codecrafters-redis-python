@@ -104,6 +104,7 @@ async def handle_client(reader, writer):
         redis_handler.parse_input(received_message)
         redis_handler.execute_command()
         response_message = redis_handler.parse_output()
+        print(f"Response {response_message} to {address}")
         
         # default to response "+PONG\r\n"
         #await asyncio.sleep(2)
