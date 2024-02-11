@@ -79,7 +79,7 @@ class RedisIOHandler:
         '''
         if input_obj.type == "str" or input_obj.type == "bulk_str":
             if(input_obj.obj == "ping"):
-                return "PONG"
+                return RedisObject("PONG", "str")
             return input_obj
         elif input_obj.type == "list":
             _input_obj_len = len(input_obj.obj)
@@ -104,7 +104,7 @@ class RedisIOHandler:
                         _ps = float(input_obj[_idx+2].obj)
                         _idx += 2
                         asyncio.create_task(self.delete_key(_key, _ps))
-                    return "OK"
+                    return RedisObject(obj="OK", typ="str")
                 elif obj =="GET" or obj =="get":
                     _key = input_obj[_idx + 1]
                     try:
@@ -118,7 +118,7 @@ class RedisIOHandler:
                     #output_obj.append("PONG")
                 _idx += 1
             return output_obj
-        return []
+        return RedisObject(obj=[], typ="list")
     def parse_input(self, input_string):
         # *2\r\n$4\r\nECHO\r\n$3\r\nhey\r\n
         # "*1\r\n$4\r\nping\r\n"
