@@ -115,8 +115,7 @@ class RedisIOHandler:
     def execute_command(self):
         self.parsed_output = self.render_output_obj(self.parsed_input)
 
-async def handle_client(reader, writer):
-    redis_handler = RedisIOHandler()
+async def handle_client(reader, writer, redis_handler):
     address = writer.get_extra_info('peername')
     print(f"Connected to {address}")
 
@@ -144,7 +143,8 @@ async def handle_client(reader, writer):
     await writer.wait_closed()
 
 async def main():
-    server = await asyncio.start_server(handle_client, 'localhost', 6379)
+    redis_handler = RedisIOHandler()
+    server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', 6379)
     
     async with server:
         print('Server Running')

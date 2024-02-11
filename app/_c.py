@@ -13,12 +13,12 @@ try:
     client_socket.connect((server_ip, server_port))
     print("Connected to server")
     _inp = "+ping\r\n"
-    while True:
+    for i in range(4):
         # Send data to the server
         #message = "*4\r\n$4\r\nping\r\n$4\r\necho\r\n$3\r\vlol\r\v$4\r\nping\r\n"
-        _inp = input()
-        if(_inp != "\n"):
-            message = "\r\n".join(input().split(" "))
+        #_inp = input()
+        #if(_inp != "\n"):
+        #    message = "\r\n".join(input().split(" "))
         #message = "*3\r\n$4\r\nping\r\n$4\r\necho\r\n$4\r\npool\r\n"
         try:
             client_socket.send(message.encode())
