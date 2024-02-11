@@ -65,7 +65,7 @@ class RedisIOHandler:
                 obj = input_obj[_idx]
                 if isinstance(obj, list):
                     output_obj.append(self.render_output_obj(obj))
-                elif obj == "ECHO":
+                elif obj == "ECHO" or obj =="echo":
                     return input_obj[_idx+1]
                     #output_obj.append(input_obj[_idx+1])
                     _idx += 1
