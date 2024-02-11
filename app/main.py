@@ -79,8 +79,8 @@ class RedisIOHandler:
                     self.redis[_key] = _value
                     _idx += 2
                     if _idx + 1 < _input_obj_len and input_obj[_idx + 1] == "px":
-                        _idx += 2
                         _ps = float(input_obj[_idx+2])
+                        _idx += 2
                         asyncio.create_task(self.delete_key(_key, _ps))
                     return "OK"
                 elif obj =="GET" or obj =="get":
