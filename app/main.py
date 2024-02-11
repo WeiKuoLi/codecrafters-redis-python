@@ -1,5 +1,7 @@
 import asyncio
-
+class ErrorString:
+    def __init__(self, string):
+        self.string = string
 class RedisIOHandler:
     def __init__(self):
         self.parsed_input = None
@@ -52,7 +54,7 @@ class RedisIOHandler:
             for obj in root_obj:
                 _str += self.get_resp_string(obj)
             return _str
-        return ""
+        return "_\r\n"
 
     def render_output_obj(self, input_obj):
         if isinstance(input_obj, str):
@@ -88,7 +90,7 @@ class RedisIOHandler:
                     try:
                         _value = self.redis[_key] 
                     except:
-                        _value = "error"
+                        _value = ErrorString("Null")
                     _idx += 1
                     return _value
                 elif obj == "ping":
