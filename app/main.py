@@ -54,6 +54,9 @@ class RedisIOHandler:
             for obj in root_obj:
                 _str += self.get_resp_string(obj)
             return _str
+        elif isinstance(root_obj, ErrorString):
+            if root_obj.string =="null"
+                return "-1\r\n"
         return "_\r\n"
 
     def render_output_obj(self, input_obj):
