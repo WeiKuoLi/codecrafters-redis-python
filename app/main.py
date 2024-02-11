@@ -13,6 +13,12 @@ class RedisObject:
             self.typ = typ
     def print(self):
         print(f"{self.typ} object is: {self.obj} ")
+    
+    def __hash__(self):
+        return hash(self.typ + self.obj)
+
+    def __eq__(self, other):
+        return isinstance(other, RedisObject) and self.obj == other.obj and self.typ == other.typ
 
 class RedisIOHandler:
     def __init__(self):
