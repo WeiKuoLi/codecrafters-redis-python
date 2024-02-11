@@ -128,7 +128,7 @@ class RedisIOHandler:
                 elif _obj.obj == "ping":
                     return RedisObject(obj="PONG", typ="str")
                     #output_obj.append("PONG")
-                elif _obj.obj == "CONFIG":
+                elif _obj.obj == "CONFIG" or _obj.obj =="config":
                     _config_key =  input_obj.obj[_idx + 2]
                     _config_val = RedisObject(self.rdb_dir) if _config_key.obj == "dir"  else  RedisObject(self.rdb_dbfilename)
                     _output = RedisObject(obj=[])
