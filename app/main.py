@@ -107,6 +107,8 @@ class RedisIOHandler:
                     return RedisObject(obj="OK", typ="str")
                 elif _obj.obj =="GET" or _obj.obj =="get":
                     _key = input_obj.obj[_idx + 1]
+                    print(">>>>>>")
+                    _key.print()
                     try:
                         _value = self.redis[_key] 
                     except:
