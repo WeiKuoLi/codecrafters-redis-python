@@ -4,7 +4,7 @@ class RedisIOHandler:
     def __init__(self):
         self.parsed_input = None
         self.parsed_output = None
-    
+        self.redis = {}
     def get_root_object(self, input_string):
         '''
         returns the root object and the rest of unparsed input_string
@@ -69,6 +69,16 @@ class RedisIOHandler:
                     return input_obj[_idx+1]
                     #output_obj.append(input_obj[_idx+1])
                     _idx += 1
+                elif obj =="SET" or obj =="set":
+                    _key = input_obj[_idx + 1]
+                    _value = input_obj[_idx + 2]
+                    self.redis[_key] = _value
+                    _idx += 2
+                elif obj =="GET" or obj =="get":
+                    _key = input_obj[_idx + 1]
+                    _value = self.redis[_key] 
+                    _idx += 1
+                    return _value
                 elif obj == "ping":
                     return "PONG"
                     #output_obj.append("PONG")
