@@ -10,19 +10,27 @@ class RedisObject:
                 self.typ = "str"
             elif isinstance(obj, list):
                 self.typ = "list"
+            elif isinstance(obj, RedisObject):
+                self.typ = "RedisObject"
         else:
             self.typ = typ
         self.rdb_dir = "" 
         self.rdb_dbfilename = "" 
 
-    def print(self):
-        print(f"{self.typ} object is: {self.obj} ")
+    def __repr__(self):
+        return (f"< Object {self.obj}, Type: {self.typ} >")
+    
+    def __str__(self):
+        return (f"< Object {str(self.obj)}, Type: {str(self.typ)} >")
     
     def __hash__(self):
-        return hash(self.typ + self.obj)
+        return hash((self.typ, self.obj))
 
     def __eq__(self, other):
         return isinstance(other, RedisObject) and self.obj == other.obj and self.typ == other.typ
+    
+    def copy(self):
+        return RedisObject(obj=self.obj, typ=self.typ)
 
 class RedisIOHandler:
     def __init__(self):
@@ -109,7 +117,7 @@ class RedisIOHandler:
                     _key = input_obj.obj[_idx + 1]
                     _value = input_obj.obj[_idx + 2]
                     self.redis[_key] = _value
-                    print(f"set {_key.typ} {_key.obj},  {_value.typ} {_value.obj} ")
+                    print(f"set {str(_key)}: {str(_value)} ")
                     _idx += 2
                     if _idx + 1 < _input_obj_len and input_obj.obj[_idx + 1].obj == "px":
                         _ps = float(input_obj.obj[_idx+2].obj)
@@ -118,7 +126,7 @@ class RedisIOHandler:
                     return RedisObject(obj="OK", typ="str")
                 elif _obj.obj =="GET" or _obj.obj =="get":
                     _key = input_obj.obj[_idx + 1]
-                    print(f"get {_key.typ} {_key.obj}")
+                    print(f"get {str(_key)}")
                     try:
                         _value = self.redis[_key] 
                     except:
@@ -162,12 +170,14 @@ async def handle_client(reader, writer, redis_handler):
             break
 
         received_message = received_data.decode()
-        print(f"Received {received_message} from {address}")
+        #print(f"Received {received_message} from {address}")
 
         redis_handler.parse_input(received_message)
+        print(f"Received: {redis_handler.parsed_input}")
         redis_handler.execute_command()
+        print(f"Response: {redis_handler.parsed_output}")
         response_message = redis_handler.parse_output()
-        print(f"Response {response_message} to {address}")
+        #print(f"Response {response_message} to {address}")
         
         # default to response "+PONG\r\n"
         #await asyncio.sleep(2)

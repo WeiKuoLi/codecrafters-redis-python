@@ -16,7 +16,11 @@ try:
     while True:
         # Send data to the server
         #message = "*4\r\n$4\r\nping\r\n$4\r\necho\r\n$3\r\vlol\r\v$4\r\nping\r\n"
-        _inp = input()
+        try:
+            _inp = input()
+        except:
+            break
+
         if(_inp != "\n"):
             message = "\r\n".join(_inp.split(" "))
         #message = "*3\r\n$4\r\nping\r\n$4\r\necho\r\n$4\r\npool\r\n"
@@ -32,6 +36,8 @@ try:
 
 except ConnectionRefusedError:
     print("Connection refused: Server is not running or unreachable")
+except KeyboardInterrupt:
+    print("endding client connection")
 except Exception as e:
     print("An error occurred:", e)
 
