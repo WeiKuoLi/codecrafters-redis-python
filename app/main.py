@@ -14,8 +14,6 @@ class RedisObject:
                 self.typ = "RedisObject"
         else:
             self.typ = typ
-        self.rdb_dir = "" 
-        self.rdb_dbfilename = "" 
 
     def __repr__(self):
         return (f"< Object {self.obj}, Type: {self.typ} >")
@@ -37,6 +35,8 @@ class RedisIOHandler:
         self.parsed_input = None
         self.parsed_output = None
         self.redis = {}
+        self.rdb_dir = "" 
+        self.rdb_dbfilename = "" 
 
     async def delete_key(self, _key, millisecond):
         await asyncio.sleep(millisecond / 1000)
