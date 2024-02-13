@@ -3,6 +3,8 @@ import asyncio
 from .src.redis import RedisObject
 #import pdb
 import struct
+from datetime import datetime
+
 def read_bits(file_path, num_bits=1):
     with open(file_path, 'rb') as file:
         byte = file.read(1)
@@ -215,7 +217,9 @@ async def import_rdb_file(redis_handler, file_path=None):
 
         check_header(bit_iterator)
         while True:
-
+            
+            # Get the current datetime
+            current_timestamp = int(datetime.now().timestamp()*1000)
             block_typ, block_data = "", [] 
             block_typ, *block_data = read_block(bit_iterator) 
             if(block_typ == 'ff'):
@@ -229,10 +233,12 @@ async def import_rdb_file(redis_handler, file_path=None):
                 assert _val_typ == 0
                 redis_handler.redis[str(_key)] = RedisObject(str(_value))
                 #pdb.set_trace()
+                _expire_time -= current_timestamp
                 print(f"EXPIRE TIME {_expire_time} ms")
                 asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time))
             elif(block_typ == 'fd'):
                 _expire_time, _val_typ, _key, _value = block_data
+                _expire_time -= current_timestamp/1000
                 assert _val_typ == 0
                 redis_handler.redis[str(_key)] = RedisObject(str(_value))
                 asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time * 1000))
