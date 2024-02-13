@@ -46,7 +46,8 @@ async def main():
     redis_handler.rdb_dbfilename = args.dbfilename
     if(args.port is None):
         redis_handler.port_number = 6379
-    redis_handler.port_number = args.port
+    else:
+        redis_handler.port_number = int(args.port)
     
     port = redis_handler.port_number
     asyncio.create_task(import_rdb_file(redis_handler))
