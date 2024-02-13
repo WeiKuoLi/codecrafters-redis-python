@@ -44,7 +44,7 @@ async def main():
     redis_handler.rdb_dir = args.dir
     redis_handler.rdb_dbfilename = args.dbfilename
     
-    await import_rdb_file(redis_handler) 
+    asyncio.create_task(import_rdb_file(redis_handler))
     server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', 6379)
     
     async with server:
