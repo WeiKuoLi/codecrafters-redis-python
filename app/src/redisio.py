@@ -6,7 +6,8 @@ class RedisIOHandler:
         self.parsed_output = None
         self.redis = {}
         self.rdb_dir = "" 
-        self.rdb_dbfilename = "" 
+        self.rdb_dbfilename = ""
+        self.port_number = 6379
 
     async def delete_key(self, _key, millisecond):
         await asyncio.sleep(millisecond / 1000)

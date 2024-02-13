@@ -37,15 +37,20 @@ async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dir", type=str, help="The directory where RDB files are stored")
     parser.add_argument("--dbfilename", type=str, help="The name of the RDB file")
+    parser.add_argument("--port", type=int, help="redis server port number(default to 6379)")
     args = parser.parse_args()
     
 
     redis_handler = RedisIOHandler()
     redis_handler.rdb_dir = args.dir
     redis_handler.rdb_dbfilename = args.dbfilename
+    if(args.port is None):
+        redis_handler.port_number = 6379
+    redis_handler.port_number = args.port
     
+    port = redis_handler.port_number
     asyncio.create_task(import_rdb_file(redis_handler))
-    server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', 6379)
+    server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', port)
     
     async with server:
         print('Server Running')
