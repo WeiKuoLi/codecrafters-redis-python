@@ -50,9 +50,10 @@ def read_resizedb_field(bit_iterator):
 def read_value_type(bit_iterator):
     _bits = [next(bit_iterator) for _ in range(8*1)]
     _bytes = bits_to_bytes(_bits)
-    _int = int.from_bytes(_bytes, byteorder='little')
-    if(_int !=0):
+    _val_typ = int.from_bytes(_bytes, byteorder='little')
+    if(_val_typ !=0):
         raise ValueError("only string encoding supported")
+    return _val_typ
 def read_unsigned_int(bit_iterator):
     _bits = [next(bit_iterator) for _ in range(8*4)]
     _bytes = bits_to_bytes(_bits)
@@ -64,6 +65,7 @@ def read_unsigned_long(bit_iterator):
     _bytes = bits_to_bytes(_bits)
     _int = int.from_bytes(_bytes, byteorder='little')
     return _int
+
 
 def read_block_type(bit_iterator):
     _bits = [next(bit_iterator) for _ in range(8*1)]
@@ -215,16 +217,16 @@ async def import_rdb_file(redis_handler, file_path=None):
                 break
             elif(block_typ == 'we'):
                 _expire_time, _val_typ, _key, _value = block_data
-                #assert _val_typ == 0
+                assert _val_typ == 0
                 redis_handler.redis[str(_key)] = RedisObject(str(_value))
             elif(block_typ == 'fc'):
                 _expire_time, _val_typ, _key, _value = block_data
-                #assert _val_typ == 0
+                assert _val_typ == 0
                 redis_handler.redis[str(_key)] = RedisObject(str(_value))
                 asyncio.create_task(self.delete_key(str(_key), _expire_time))
             elif(block_typ == 'fd'):
                 _expire_time, _val_typ, _key, _value = block_data
-                #assert _val_typ == 0
+                assert _val_typ == 0
                 redis_handler.redis[RedisObject(str(_key))] = RedisObject(str(_value))
                 asyncio.create_task(self.delete_key(str(_key), _expire_time * 1000))
                 
@@ -234,5 +236,6 @@ async def import_rdb_file(redis_handler, file_path=None):
         # Handle any type of exception and print the type of exception
         print("An error occurred:", type(e).__name__)
     print("End loading phase")
+
 if __name__ == "__main__":
     read_rdb_file('rdb_data/dump2.rdb')
