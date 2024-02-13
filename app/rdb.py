@@ -230,8 +230,9 @@ async def import_rdb_file(redis_handler, file_path=None):
                 
             #print(f"{block_typ} block,{block_data}\n\n")
             #block_typ, expire_time, val_typ, key, value =
-    except:
-        print("cannot find RDB file, proceed as if non exist")
+    except Exception as e:
+        # Handle any type of exception and print the type of exception
+        print("An error occurred:", type(e).__name__)
     print("End loading phase")
 if __name__ == "__main__":
     read_rdb_file('rdb_data/dump2.rdb')
