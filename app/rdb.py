@@ -1,6 +1,8 @@
 import os
 import asyncio
 from .src.redis import RedisObject
+#import pdb
+#pdb.set_trace()
 def read_bits(file_path, num_bits=1):
     with open(file_path, 'rb') as file:
         byte = file.read(1)
@@ -223,12 +225,12 @@ async def import_rdb_file(redis_handler, file_path=None):
                 _expire_time, _val_typ, _key, _value = block_data
                 assert _val_typ == 0
                 redis_handler.redis[str(_key)] = RedisObject(str(_value))
-                asyncio.create_task(self.delete_key(str(_key), _expire_time))
+                asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time))
             elif(block_typ == 'fd'):
                 _expire_time, _val_typ, _key, _value = block_data
                 assert _val_typ == 0
-                redis_handler.redis[RedisObject(str(_key))] = RedisObject(str(_value))
-                asyncio.create_task(self.delete_key(str(_key), _expire_time * 1000))
+                redis_handler.redis[str(_key)] = RedisObject(str(_value))
+                asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time * 1000))
                 
             #print(f"{block_typ} block,{block_data}\n\n")
             #block_typ, expire_time, val_typ, key, value =
