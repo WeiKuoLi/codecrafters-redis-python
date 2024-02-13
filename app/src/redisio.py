@@ -1,4 +1,4 @@
-import .redis
+from .redis import RedisObject
 import asyncio
 class RedisIOHandler:
     def __init__(self):
