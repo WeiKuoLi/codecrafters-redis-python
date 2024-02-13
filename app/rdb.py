@@ -2,7 +2,7 @@ import os
 import asyncio
 from .src.redis import RedisObject
 #import pdb
-#pdb.set_trace()
+import struct
 def read_bits(file_path, num_bits=1):
     with open(file_path, 'rb') as file:
         byte = file.read(1)
@@ -59,14 +59,17 @@ def read_value_type(bit_iterator):
 def read_unsigned_int(bit_iterator):
     _bits = [next(bit_iterator) for _ in range(8*4)]
     _bytes = bits_to_bytes(_bits)
-    _int = int.from_bytes(_bytes, byteorder='little')
-    return _int
+    #_int = int.from_bytes(_bytes, byteorder='little')
+    _unsigned_int = struct.unpack('I', _bytes)[0]
+
+    return _unsigned_int
 
 def read_unsigned_long(bit_iterator):
     _bits = [next(bit_iterator) for _ in range(8*8)]
     _bytes = bits_to_bytes(_bits)
-    _int = int.from_bytes(_bytes, byteorder='little')
-    return _int
+    #_int = int.from_bytes(_bytes, byteorder='little')
+    _unsigned_long = struct.unpack('Q', _bytes)[0]
+    return _unsigned_long
 
 
 def read_block_type(bit_iterator):
@@ -225,6 +228,7 @@ async def import_rdb_file(redis_handler, file_path=None):
                 _expire_time, _val_typ, _key, _value = block_data
                 assert _val_typ == 0
                 redis_handler.redis[str(_key)] = RedisObject(str(_value))
+                #pdb.set_trace()
                 asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time))
             elif(block_typ == 'fd'):
                 _expire_time, _val_typ, _key, _value = block_data
