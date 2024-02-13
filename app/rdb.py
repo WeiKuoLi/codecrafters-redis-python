@@ -60,7 +60,7 @@ def read_unsigned_int(bit_iterator):
     _bits = [next(bit_iterator) for _ in range(8*4)]
     _bytes = bits_to_bytes(_bits)
     #_int = int.from_bytes(_bytes, byteorder='little')
-    _unsigned_int = struct.unpack('I', _bytes)[0]
+    _unsigned_int = struct.unpack('<I', _bytes)[0]
 
     return _unsigned_int
 
@@ -68,7 +68,7 @@ def read_unsigned_long(bit_iterator):
     _bits = [next(bit_iterator) for _ in range(8*8)]
     _bytes = bits_to_bytes(_bits)
     #_int = int.from_bytes(_bytes, byteorder='little')
-    _unsigned_long = struct.unpack('Q', _bytes)[0]
+    _unsigned_long = struct.unpack('<Q', _bytes)[0]
     return _unsigned_long
 
 
