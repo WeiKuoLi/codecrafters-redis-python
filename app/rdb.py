@@ -233,10 +233,10 @@ async def import_rdb_file(redis_handler, file_path=None):
                 assert _val_typ == 0
                 redis_handler.redis[str(_key)] = RedisObject(str(_value))
                 #pdb.set_trace()
-                print(f"EXPIRE TIME {_expire_time} ms")
-                _expire_time -= current_timestamp
-                print(f"EXPIRE TIME {_expire_time} ms")
+                print(f"EXPIRE TIMESTAMP {_expire_time} ms")
                 print(f"current TIME {current_timestamp} ms")
+                _expire_time -= current_timestamp
+                print(f"EXPIRE in {_expire_time} ms")
                 asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time))
             elif(block_typ == 'fd'):
                 _expire_time, _val_typ, _key, _value = block_data
