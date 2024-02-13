@@ -215,7 +215,7 @@ async def import_rdb_file(redis_handler, file_path=None):
                 break
             elif(block_typ == 'we'):
                 _expire_time, _val_typ, _key, _value = block_data
-                assert _val_typ == 0
+                #assert _val_typ == 0
                 redis_handler.redis[str(_key)] = RedisObject(str(_value))
             elif(block_typ == 'fc'):
                 _expire_time, _val_typ, _key, _value = block_data
