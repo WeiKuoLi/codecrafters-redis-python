@@ -2,6 +2,8 @@ import argparse
 import asyncio
 from .src.redisdata import RedisObject
 from .src.redisio import RedisIOHandler
+from .src.redis import RedisServer
+
 from .rdb import import_rdb_file
 
 async def handle_client(reader, writer, redis_handler):
@@ -40,17 +42,20 @@ async def main():
     parser.add_argument("--port", type=int, help="redis server port number(default to 6379)")
     args = parser.parse_args()
     
-
-    redis_handler = RedisIOHandler()
-    redis_handler.rdb_dir = args.dir
-    redis_handler.rdb_dbfilename = args.dbfilename
     if(args.port is None):
-        redis_handler.port_number = 6379
+        port_number = 6379
     else:
-        redis_handler.port_number = int(args.port)
+        port_number = int(args.port)
     
-    port = redis_handler.port_number
-    asyncio.create_task(import_rdb_file(redis_handler))
+    redis_server = RedisServer(port_number=port_number)
+    if(args.dir):
+        redis_server.rdb_dir = args.dir
+    if(args.dbfilename):
+        redis_server.rdb_dbfilename = args.dbfilename
+
+    redis_handler = RedisIOHandler(redis_server=redis_server)
+
+    asyncio.create_task(import_rdb_file(redis_server))
     server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', port)
     
     async with server:

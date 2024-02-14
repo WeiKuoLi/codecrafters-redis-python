@@ -209,10 +209,10 @@ def read_rdb_file(file_path='dump0.rdb'):
 
     print("End of file reached")
 
-async def import_rdb_file(redis_handler, file_path=None):
+async def import_rdb_file(redis_server, file_path=None):
     try:
         if(file_path is None):
-           file_path = os.path.join(redis_handler.rdb_dir, redis_handler.rdb_dbfilename) 
+           file_path = os.path.join(redis_server.rdb_dir, redis_server.rdb_dbfilename) 
         bit_iterator = read_bits(file_path)
 
         check_header(bit_iterator)
@@ -227,7 +227,7 @@ async def import_rdb_file(redis_handler, file_path=None):
             elif(block_typ == 'we'):
                 _expire_time, _val_typ, _key, _value = block_data
                 assert _val_typ == 0
-                redis_handler.redis[str(_key)] = RedisObject(str(_value))
+                redis_server.redis[str(_key)] = RedisObject(str(_value))
             elif(block_typ == 'fc'):
                 _expire_time, _val_typ, _key, _value = block_data
                 assert _val_typ == 0
@@ -237,15 +237,17 @@ async def import_rdb_file(redis_handler, file_path=None):
                 _expire_time -= current_timestamp
                 #print(f"EXPIRE in {_expire_time} ms")
                 if (_expire_time > 0):
-                    redis_handler.redis[str(_key)] = RedisObject(str(_value))
-                    asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time))
+                    redis_server.command_set(_key, _value, "px", _expire_time)
+                    #redis_server.redis[str(_key)] = RedisObject(str(_value))
+                    #asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time))
             elif(block_typ == 'fd'):
                 _expire_time, _val_typ, _key, _value = block_data
                 _expire_time -= current_timestamp/1000
                 assert _val_typ == 0
                 if (_expire_time > 0):
-                    redis_handler.redis[str(_key)] = RedisObject(str(_value))
-                    asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time * 1000))
+                    redis_server.command_set(_key, _value, "px", _expire_time * 1000)
+                    #redis_handler.redis[str(_key)] = RedisObject(str(_value))
+                    #asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time * 1000))
                 
             #print(f"{block_typ} block,{block_data}\n\n")
             #block_typ, expire_time, val_typ, key, value =
