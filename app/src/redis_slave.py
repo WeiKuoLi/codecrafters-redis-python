@@ -53,7 +53,7 @@ class RedisServerSlave(RedisServer):
             _message_2.obj.append(RedisObject.from_string("psync2"))
             for _message in [_message_1, _message_2]:
                 # Send a ping message
-                writer.write(str(_message))
+                writer.write(str(_message).encode())
                 await writer.drain()
                 print("wait response")
                 # Read the response
