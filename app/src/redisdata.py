@@ -50,7 +50,7 @@ class RedisObject:
     def copy(self):
         return RedisObject(obj=self.obj, typ=self.typ)
     
-    @class_method
+    @classmethod
     def from_string(cls, string):
         '''
         parse the string and return an instance 
@@ -58,7 +58,7 @@ class RedisObject:
         _obj, _ = cls.recursive_parse_string(string)
         return _obj
 
-    @class_method
+    @classmethod
     def recursive_parse_string(cls, string):
         '''
         returns an instance of the first object and its remaining unparsed string
