@@ -19,14 +19,14 @@ class RedisServerSlave(RedisServer):
             # Open a connection to the server
             reader, writer = await asyncio.open_connection(self.master_host, self.master_port)
         
-            await self.ping_server(reader, writer)
+            await self.ping_master(reader, writer)
             # Close the connection
             writer.close()
             await writer.wait_closed()
         except Exception as e:
             print("Error:", e)
 
-    async def ping_server(self, reader, writer):
+    async def ping_master(self, reader, writer):
             print("send ping")
             # Send a ping message
             writer.write(b"+ping\r\n")
@@ -37,3 +37,26 @@ class RedisServerSlave(RedisServer):
             response_obj = RedisObject.from_string(response.decode())
             print("Response From Server:", response_obj)
             assert response_obj.obj == "PONG"
+    
+    async def replconf_master(self, reader, writer):
+            print("send replconf")
+            
+            _message_1 = RedisObject([])
+            _message_1.obj.append(RedisObject.from_string("REPLCONF"))
+            _message_1.obj.append(RedisObject.from_string("listening-port"))
+            _message_1.obj.append(RedisObject.from_string(f"{self.port_number}"))
+            
+            _message_2 = RedisObject([])
+            _message_2.obj.append(RedisObject.from_string("REPLCONF"))
+            _message_2.obj.append(RedisObject.from_string("capa"))
+            _message_2.obj.append(RedisObject.from_string("psync2"))
+            for _message in [_message_1, _message_2]:
+                # Send a ping message
+                writer.write(str(_message))
+                await writer.drain()
+                print("wait response")
+                # Read the response
+                response = await reader.readline()
+                response_obj = RedisObject.from_string(response.decode())
+                print("Response From Server:", response_obj)
+                assert response_obj.obj == "OK"
