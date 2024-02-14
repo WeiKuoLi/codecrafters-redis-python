@@ -15,7 +15,7 @@ class RedisServer:
         await asyncio.sleep(millisecond / 1000)
         del self.redis[_key]
 
-    def command_ping(self):
+    def command_ping(self, *args):
         return RedisObject.from_string("+PONG\r\n")
     
     def command_echo(self, *args):
@@ -69,6 +69,7 @@ class RedisServer:
                 _output.obj.append(RedisObject(obj=_key, typ="bulk_str"))
             if(len(_output.obj) ==0 ):
                 return RedisObject(obj="",typ="null_bulk_str")
+            return _output
         except:
             return RedisObject.from_string("")
 
