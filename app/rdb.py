@@ -1,6 +1,6 @@
 import os
 import asyncio
-from .src.redis import RedisObject
+from .src.redisdata import RedisObject
 #import pdb
 import struct
 from datetime import datetime
@@ -255,4 +255,4 @@ async def import_rdb_file(redis_handler, file_path=None):
     print("End loading phase")
 
 if __name__ == "__main__":
-    read_rdb_file('rdb_data/dump2.rdb')
+    read_rdb_file('data_rdb/dump2.rdb')

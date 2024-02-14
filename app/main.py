@@ -1,6 +1,6 @@
 import argparse
 import asyncio
-from .src.redis import RedisObject
+from .src.redisdata import RedisObject
 from .src.redisio import RedisIOHandler
 from .rdb import import_rdb_file
 

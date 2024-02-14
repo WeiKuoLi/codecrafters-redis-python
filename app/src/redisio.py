@@ -1,4 +1,4 @@
-from .redis import RedisObject
+from .redisdata import RedisObject
 import asyncio
 class RedisIOHandler:
     def __init__(self):
@@ -10,6 +10,7 @@ class RedisIOHandler:
         self.port_number = 6379
 
     async def delete_key(self, _key, millisecond):
+        assert isinstance(_key, str)
         await asyncio.sleep(millisecond / 1000)
         del self.redis[_key]
 
@@ -44,23 +45,6 @@ class RedisIOHandler:
                 _input_string_remove_head = _str
             return RedisObject(obj=_lst, typ="list"), _input_string_remove_head
 
-    def get_resp_string(self, root_obj):
-        '''
-        from a root_obj return its string
-        '''
-        if root_obj.typ =="bulk_str":
-            return f"${len(root_obj.obj)}\r\n{root_obj.obj}\r\n"
-        elif root_obj.typ == "str":
-            return f"+{root_obj.obj}\r\n"
-        elif root_obj.typ == "list":
-            _root_obj_len = len(root_obj.obj)
-            _str = f"*{_root_obj_len}\r\n"
-            for node_obj in root_obj.obj:
-                _str += self.get_resp_string(node_obj)
-            return _str
-        elif root_obj.typ == "null_bulk_str":
-            return "$-1\r\n"
-        return "$-1\r\n"
 
     def render_output_obj(self, input_obj):
         '''
@@ -89,7 +73,7 @@ class RedisIOHandler:
                     assert isinstance(_key, str)
                     _value = input_obj.obj[_idx + 2]
                     self.redis[_key] = _value
-                    print(f"set {str(_key)}: {str(_value)} ")
+                    print(f"set {str(_key)}: {_value} ")
                     _idx += 2
                     if _idx + 1 < _input_obj_len and input_obj.obj[_idx + 1].obj == "px":
                         _ps = float(input_obj.obj[_idx+2].obj)
@@ -133,11 +117,11 @@ class RedisIOHandler:
         # *2\r\n$4\r\nECHO\r\n$3\r\nhey\r\n
         # "*1\r\n$4\r\nping\r\n"
         # "+PONG\r\n"
-        root_obj, _ = self.get_root_object(input_string)
-        self.parsed_input = root_obj
+        #root_obj, _ = self.get_root_object(input_string)
+        self.parsed_input = RedisObject.from_string(input_string)
 
     def parse_output(self):
-        return self.get_resp_string(self.parsed_output)
+        return str(self.parsed_output)
 
     def execute_command(self):
         self.parsed_output = self.render_output_obj(self.parsed_input)
