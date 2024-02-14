@@ -2,8 +2,8 @@ import argparse
 import asyncio
 from .src.redisdata import RedisObject
 from .src.redisio import RedisIOHandler
-from .src.redis import RedisServer
 from .src.redis_slave import RedisServerSlave
+from .src.redis_master import RedisServerMaster
 
 from .rdb import import_rdb_file
 
@@ -51,7 +51,7 @@ async def main():
         port_number = int(args.port)
     
     if(args.replicaof is None):
-        redis_server = RedisServer(port_number=port_number)
+        redis_server = RedisServerMaster(port_number=port_number)
     else:
         redis_server = RedisServerSlave(port_number=port_number)
     if(args.dir):
