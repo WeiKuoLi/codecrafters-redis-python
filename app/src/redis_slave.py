@@ -67,7 +67,7 @@ class RedisServerSlave(RedisServer):
                 assert response_obj.obj == "OK"
 
     async def psync_master(self, reader, writer):
-            print("send replconf")
+            print("send psync")
             
             _message = RedisObject([])
             _message.obj.append(RedisObject.from_string("PSYNC"))
@@ -82,5 +82,4 @@ class RedisServerSlave(RedisServer):
             response = await reader.readline()
             response_obj = RedisObject.from_string(response.decode())
             print("Response From Server:", response_obj)
-            assert response_obj.obj == "OK"
 

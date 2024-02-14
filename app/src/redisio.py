@@ -22,6 +22,8 @@ class RedisIOHandler:
                   "CONFIG": self.redis_server.command_config, 
                   "info": self.redis_server.command_info, 
                   "INFO": self.redis_server.command_info, 
+                  "REPLCONF": self.redis_server.command_replconf, 
+                  "replconf": self.redis_server.command_replconf, 
                  }
 
         if self.parsed_input.typ == "str" or self.parsed_input.typ == "bulk_str":
