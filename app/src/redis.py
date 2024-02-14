@@ -9,6 +9,7 @@ class RedisServer:
         self.rdb_dir = "" 
         self.rdb_dbfilename = ""
         self.port_number = port_number
+        self.role = "master"
 
     async def delete_key(self, _key, millisecond):
         assert isinstance(_key, str)
@@ -72,5 +73,10 @@ class RedisServer:
             return _output
         except:
             return RedisObject.from_string("")
-
+    
+    def command_info(self, *args):
+        if args[0].obj != "replication":
+            return RedisObject.from_string("")
+        _info = f"role:{self.role}"
+        return RedisObject(obj=_info, typ="bulk_str") 
     
