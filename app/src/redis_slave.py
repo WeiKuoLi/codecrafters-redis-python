@@ -13,7 +13,7 @@ class RedisServerSlave(RedisServer):
         assert self.master_host
         assert self.master_port
         self.hand_shake()
-    def handshake(self):
+    async def handshake(self):
         await self.ping_server()
 
     async def ping_server(self):
