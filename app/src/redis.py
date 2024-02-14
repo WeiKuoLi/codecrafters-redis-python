@@ -80,3 +80,6 @@ class RedisServer:
         _info = f"role:{self.role}"
         return RedisObject(obj=_info, typ="bulk_str") 
     
+    def command_replconf(self, *args):
+        pass
+        return RedisObject("OK")
