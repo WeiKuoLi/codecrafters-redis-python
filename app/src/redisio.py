@@ -30,8 +30,8 @@ class RedisIOHandler:
                self.parsed_output = RedisObject.from_string("")
         elif self.parsed_input.typ == "list":
            try:
-               _cmd = str(self.parsed_input[0].obj)
-               self.parsed_output = handler[_cmd](*(self.parsed_input[1:]))
+               _cmd = str(self.parsed_input.obj[0].obj)
+               self.parsed_output = handler[_cmd](*(self.parsed_input.obj[1:]))
            except:
                self.parsed_output = RedisObject.from_string("")
             
@@ -43,7 +43,6 @@ class RedisIOHandler:
         # "*1\r\n$4\r\nping\r\n"
         # "+PONG\r\n"
         self.parsed_input = RedisObject.from_string(input_string)
-
     def parse_output(self):
         return str(self.parsed_output)
 
