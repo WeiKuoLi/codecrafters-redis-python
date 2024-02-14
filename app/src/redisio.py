@@ -24,13 +24,13 @@ class RedisIOHandler:
 
         if self.parsed_input.typ == "str" or self.parsed_input.typ == "bulk_str":
            try:
-               _cmd = str(self.parsed_input)
+               _cmd = str(self.parsed_input.obj)
                self.parsed_output = handler[_cmd]()
            except:
                self.parsed_output = RedisObject.from_string("")
         elif self.parsed_input.typ == "list":
            try:
-               _cmd = str(self.parsed_input[0])
+               _cmd = str(self.parsed_input[0].obj)
                self.parsed_output = handler[_cmd](*(self.parsed_input[1:]))
            except:
                self.parsed_output = RedisObject.from_string("")
