@@ -20,6 +20,6 @@ class RedisServerMaster(RedisServer):
         _info += f"master_repl_offset:{self.repl_offset}\n"
         return RedisObject(obj=_info, typ="bulk_str") 
    
-   def command_replconf(self, *args):
-       pass
-       return RedisObject("OK")
+    def command_replconf(self, *args):
+        pass
+        return RedisObject("OK")
