@@ -23,3 +23,9 @@ class RedisServerMaster(RedisServer):
     def command_replconf(self, *args):
         pass
         return RedisObject("OK")
+
+    def command_psync(self, *args):
+        return RedisObject([
+            RedisObject(obj="FULLRESYNC", typ="str"),
+            RedisObject(obj=self.replid, typ="str"),
+            RedisObject(obj=str(self.repl_offset), typ="str")])

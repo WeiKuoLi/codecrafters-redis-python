@@ -83,3 +83,7 @@ class RedisServer:
     def command_replconf(self, *args):
         pass
         return RedisObject("OK")
+    
+    def command_psync(self, *args):
+        pass
+        return RedisObject("OK")
