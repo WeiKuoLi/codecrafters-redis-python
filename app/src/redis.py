@@ -49,7 +49,7 @@ class RedisServer:
     
     def command_config(self, *args): 
         try:
-            assert(args[0] == 'get' or args[0] =='GET')
+            assert(args[0].obj == 'get' or args[0].obj =='GET')
             _config_key =  args[1]
             if _config_key.obj == "dir":
                 _config_val = RedisObject(obj=self.rdb_dir, typ="bulk_str") 
