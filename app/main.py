@@ -40,6 +40,8 @@ async def main():
     parser.add_argument("--dir", type=str, help="The directory where RDB files are stored")
     parser.add_argument("--dbfilename", type=str, help="The name of the RDB file")
     parser.add_argument("--port", type=int, help="redis server port number(default to 6379)")
+    parser.add_argument("--replicaof", nargs=2, metavar=("MASTER_HOST", "MASTER_PORT"), help="Replicate data from another Redis server")
+    
     args = parser.parse_args()
     
     if(args.port is None):
@@ -47,7 +49,10 @@ async def main():
     else:
         port_number = int(args.port)
     
-    redis_server = RedisServer(port_number=port_number)
+    if(args.replicaof is None):
+        redis_server = RedisServer(port_number=port_number)
+    else:
+        redis_server = RedisServerSlave(port_number=port_number)
     if(args.dir):
         redis_server.rdb_dir = args.dir
     if(args.dbfilename):
