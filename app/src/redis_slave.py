@@ -40,21 +40,21 @@ class RedisServerSlave(RedisServer):
             # Read the response
             response = await reader.readline()
             response_obj = RedisObject.from_string(response.decode())
-            print("Response From Server:", response_obj)
+            print("Response From Server:", response_obj.__repr__())
             assert response_obj.obj == "PONG"
     
     async def replconf_master(self, reader, writer):
-            print("send replconf")
+            print("send replconf to master")
             
             _message_1 = RedisObject([])
-            _message_1.obj.append(RedisObject.from_string("REPLCONF"))
-            _message_1.obj.append(RedisObject.from_string("listening-port"))
-            _message_1.obj.append(RedisObject.from_string(f"{self.port_number}"))
+            _message_1.obj.append(RedisObject(obj="REPLCONF", typ="bulk_str"))
+            _message_1.obj.append(RedisObject(obj="listening-port", typ="bulk_str"))
+            _message_1.obj.append(RedisObject(obj=f"{self.port_number}", typ="bulk_str"))
             
             _message_2 = RedisObject([])
-            _message_2.obj.append(RedisObject.from_string("REPLCONF"))
-            _message_2.obj.append(RedisObject.from_string("capa"))
-            _message_2.obj.append(RedisObject.from_string("psync2"))
+            _message_2.obj.append(RedisObject(obj="REPLCONF", typ="bulk_str"))
+            _message_2.obj.append(RedisObject(obj="capa", typ="bulk_str"))
+            _message_2.obj.append(RedisObject(obj="psync2", typ="bulk_str"))
             for _message in [_message_1, _message_2]:
                 # Send a ping message
                 writer.write(str(_message).encode())
@@ -63,16 +63,16 @@ class RedisServerSlave(RedisServer):
                 # Read the response
                 response = await reader.readline()
                 response_obj = RedisObject.from_string(response.decode())
-                print("Response From Server:", response_obj)
+                print("Response From Server:", response_obj.__repr__())
                 assert response_obj.obj == "OK"
 
     async def psync_master(self, reader, writer):
             print("send psync")
             
             _message = RedisObject([])
-            _message.obj.append(RedisObject.from_string("PSYNC"))
-            _message.obj.append(RedisObject.from_string(f"{self.master_replid}"))
-            _message.obj.append(RedisObject.from_string(f"{self.master_repl_offset}"))
+            _message.obj.append(RedisObject(obj="PSYNC", typ="bulk_str"))
+            _message.obj.append(RedisObject(obj=f"{self.master_replid}", typ="bulk_str"))
+            _message.obj.append(RedisObject(obj=f"{self.master_repl_offset}", typ="bulk_str"))
             
             # Send a ping message
             writer.write(str(_message).encode())
@@ -81,5 +81,5 @@ class RedisServerSlave(RedisServer):
             # Read the response
             response = await reader.readline()
             response_obj = RedisObject.from_string(response.decode())
-            print("Response From Server:", response_obj)
+            print("Response From Server:", response_obj.__repr__())
 

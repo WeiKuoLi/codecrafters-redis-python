@@ -20,9 +20,9 @@ async def handle_client(reader, writer, redis_handler):
         #print(f"Received {received_message} from {address}")
 
         redis_handler.parse_input(received_message)
-        print(f"Received: {redis_handler.parsed_input}")
+        print(f"Received: {redis_handler.parsed_input.__repr__()}")
         redis_handler.execute_command()
-        print(f"Response: {redis_handler.parsed_output}")
+        print(f"Response: {redis_handler.parsed_output.__repr__()}")
         response_message = redis_handler.parse_output()
         #print(f"Response {response_message} to {address}")
         
