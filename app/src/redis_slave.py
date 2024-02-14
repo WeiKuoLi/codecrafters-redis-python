@@ -10,9 +10,12 @@ class RedisServerSlave(RedisServer):
         self.role="slave"
         self.master_host = kwargs['master_host']
         self.master_port = kwargs['master_port']
+
         assert self.master_host is not None
         assert self.master_port is not None
 
+        self.master_replid = "?"
+        self.master_repl_offset = -1
     async def hand_shake(self):
         try:
             print("open connection")
@@ -21,6 +24,7 @@ class RedisServerSlave(RedisServer):
         
             await self.ping_master(reader, writer)
             await self.replconf_master(reader, writer)
+            await self.psync_master(reader, writer)
             # Close the connection
             writer.close()
             await writer.wait_closed()
@@ -61,3 +65,22 @@ class RedisServerSlave(RedisServer):
                 response_obj = RedisObject.from_string(response.decode())
                 print("Response From Server:", response_obj)
                 assert response_obj.obj == "OK"
+
+    async def psync_master(self, reader, writer):
+            print("send replconf")
+            
+            _message = RedisObject([])
+            _message.obj.append(RedisObject.from_string("PSYNC"))
+            _message.obj.append(RedisObject.from_string(f"{self.master_replid}"))
+            _message.obj.append(RedisObject.from_string(f"{self.master_repl_offset}"))
+            
+            # Send a ping message
+            writer.write(str(_message).encode())
+            await writer.drain()
+            print("wait response")
+            # Read the response
+            response = await reader.readline()
+            response_obj = RedisObject.from_string(response.decode())
+            print("Response From Server:", response_obj)
+            assert response_obj.obj == "OK"
+
