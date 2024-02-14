@@ -53,7 +53,11 @@ async def main():
     if(args.replicaof is None):
         redis_server = RedisServerMaster(port_number=port_number)
     else:
-        redis_server = RedisServerSlave(port_number=port_number)
+        _master_host, _master_port = args.replicaof
+        redis_server = RedisServerSlave(port_number=port_number, 
+                                        master_host=_master_host, 
+                                        master_port=_master_port)
+
     if(args.dir):
         redis_server.rdb_dir = args.dir
     if(args.dbfilename):
