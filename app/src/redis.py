@@ -4,7 +4,7 @@ class RedisServer:
     '''
     Base class for my Redis server
     '''
-    def __init__(self, port_number=6379):
+    def __init__(self, port_number=6379, *args, **kwargs):
         self.redis = {}
         self.rdb_dir = "" 
         self.rdb_dbfilename = ""
