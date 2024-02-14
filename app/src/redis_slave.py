@@ -5,6 +5,6 @@ class RedisServerSlave(RedisServer):
     '''
     Base class for my Redis server
     '''
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.status="slave"
