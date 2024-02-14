@@ -28,7 +28,7 @@ class RedisServerSlave(RedisServer):
             print("wait response")
             # Read the response
             response = await reader.readline()
-            response_obj = RedisObject.from_string(response.decode().strip)
+            response_obj = RedisObject.from_string(response.decode())
             print("Response From Server:", response_obj)
             assert response_obj.obj == "PONG"
         

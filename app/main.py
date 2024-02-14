@@ -57,7 +57,7 @@ async def main():
         redis_server = RedisServerSlave(port_number=port_number, 
                                         master_host=_master_host, 
                                         master_port=_master_port)
-
+        await redis_server.hand_shake()
     if(args.dir):
         redis_server.rdb_dir = args.dir
     if(args.dbfilename):
