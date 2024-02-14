@@ -56,7 +56,7 @@ async def main():
     redis_handler = RedisIOHandler(redis_server=redis_server)
 
     asyncio.create_task(import_rdb_file(redis_server))
-    server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', port)
+    server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', port_number)
     
     async with server:
         print('Server Running')
