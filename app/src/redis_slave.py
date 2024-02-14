@@ -34,7 +34,7 @@ class RedisServerSlave(RedisServer):
     async def ping_master(self, reader, writer):
             print("send ping")
             # Send a ping message
-            writer.write(b"+ping\r\n")
+            writer.write(b"*1\r\n+ping\r\n")
             await writer.drain()
             print("wait response")
             # Read the response
