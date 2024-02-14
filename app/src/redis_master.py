@@ -16,7 +16,7 @@ class RedisServerMaster(RedisServer):
         if args[0].obj != "replication":
             return RedisObject.from_string("")
         _info = f"role:{self.role}\n"
-        _info += f"master_replit:{master_replit}\n"
-        _info += f"master_repl_offset:{master_repl_offset}\n"
+        _info += f"master_replid:{self.replid}\n"
+        _info += f"master_repl_offset:{self.repl_offset}\n"
         return RedisObject(obj=_info, typ="bulk_str") 
     
