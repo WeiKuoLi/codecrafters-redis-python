@@ -10,8 +10,9 @@ class RedisServerSlave(RedisServer):
         self.role="slave"
         self.master_host = kwargs['master_host']
         self.master_port = kwargs['master_port']
-        assert self.master_host
-        assert self.master_port
+        assert self.master_host is not None
+        assert self.master_port is not None
+
     async def hand_shake(self):
         await self.ping_server()
 
