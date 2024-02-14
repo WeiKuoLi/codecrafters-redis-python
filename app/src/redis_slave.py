@@ -17,13 +17,14 @@ class RedisServerSlave(RedisServer):
 
     async def ping_server(self):
         try:
+            print("open connection")
             # Open a connection to the server
             reader, writer = await asyncio.open_connection(self.master_host, self.master_port)
-
+            print("send ping")
             # Send a ping message
             writer.write(b"+ping\r\n")
             await writer.drain()
-
+            print("wait response")
             # Read the response
             response = await reader.readline()
             response_obj = RedisObject.from_string(response.decode().strip)
