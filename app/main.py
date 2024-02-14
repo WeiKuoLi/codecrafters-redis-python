@@ -3,6 +3,7 @@ import asyncio
 from .src.redisdata import RedisObject
 from .src.redisio import RedisIOHandler
 from .src.redis import RedisServer
+from .src.redis_slave import RedisServerSlave
 
 from .rdb import import_rdb_file
 
