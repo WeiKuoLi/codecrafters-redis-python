@@ -232,10 +232,10 @@ async def import_rdb_file(redis_server, file_path=None):
                 _expire_time, _val_typ, _key, _value = block_data
                 assert _val_typ == 0
                 #pdb.set_trace()
-                #print(f"EXPIRE TIMESTAMP {_expire_time} ms")
-                #print(f"current TIME {current_timestamp} ms")
+                print(f"EXPIRE TIMESTAMP {_expire_time} ms")
+                print(f"current TIME {current_timestamp} ms")
                 _expire_time -= current_timestamp
-                #print(f"EXPIRE in {_expire_time} ms")
+                print(f"EXPIRE in {_expire_time} ms")
                 if (_expire_time > 0):
                     redis_server.command_set(_key, _value, RedisObject("px"), _expire_time)
             elif(block_typ == 'fd'):
@@ -244,6 +244,8 @@ async def import_rdb_file(redis_server, file_path=None):
                 assert _val_typ == 0
                 if (_expire_time > 0):
                     redis_server.command_set(_key, _value, RedisObject("px"), _expire_time * 1000)
+                    #redis_handler.redis[str(_key)] = RedisObject(str(_value))
+                    #asyncio.create_task(redis_handler.delete_key(str(_key), _expire_time * 1000))
                 
             #print(f"{block_typ} block,{block_data}\n\n")
             #block_typ, expire_time, val_typ, key, value =

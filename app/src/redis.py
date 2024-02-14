@@ -32,7 +32,7 @@ class RedisServer:
             self.redis[_key] = _value
             print(f"set {_key}: {_value} ")
             if(len(args)>3 and args[2].obj =="px"):
-                _ps = float(args[3].obj)
+                _ps = int(args[3].obj)
                 asyncio.create_task(self.delete_key(_key, _ps))
             return RedisObject(obj="OK", typ="str")
         except:
