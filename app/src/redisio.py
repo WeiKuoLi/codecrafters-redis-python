@@ -10,6 +10,7 @@ class RedisIOHandler:
 
     def execute_command(self):
         handler ={"ping": self.redis_server.command_ping,
+                  "PING": self.redis_server.command_ping,
                   "echo": self.redis_server.command_echo, 
                   "ECHO": self.redis_server.command_echo, 
                   "set": self.redis_server.command_set, 
