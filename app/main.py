@@ -5,7 +5,7 @@ from .src.redisio import RedisIOHandler
 from .src.redis_slave import RedisServerSlave
 from .src.redis_master import RedisServerMaster
 
-from .rdb import import_rdb_file
+from .src.rdb import import_rdb_file
 
 async def handle_client(reader, writer, redis_handler):
     address = writer.get_extra_info('peername')
@@ -62,10 +62,11 @@ async def main():
         redis_server.rdb_dir = args.dir
     if(args.dbfilename):
         redis_server.rdb_dbfilename = args.dbfilename
-
+    
     redis_handler = RedisIOHandler(redis_server=redis_server)
 
-    asyncio.create_task(import_rdb_file(redis_server))
+    if(args.dir and args.dbfilename):
+        asyncio.create_task(import_rdb_file(redis_server))
     server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', port_number)
     
     async with server:
