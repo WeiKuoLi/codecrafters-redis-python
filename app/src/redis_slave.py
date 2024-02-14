@@ -20,6 +20,7 @@ class RedisServerSlave(RedisServer):
             reader, writer = await asyncio.open_connection(self.master_host, self.master_port)
         
             await self.ping_master(reader, writer)
+            await self.replconf_master(reader, writer)
             # Close the connection
             writer.close()
             await writer.wait_closed()
