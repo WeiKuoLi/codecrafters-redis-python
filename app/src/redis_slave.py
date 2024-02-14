@@ -12,7 +12,6 @@ class RedisServerSlave(RedisServer):
         self.master_port = kwargs['master_port']
         assert self.master_host
         assert self.master_port
-        await self.hand_shake()
     async def hand_shake(self):
         await self.ping_server()
 
