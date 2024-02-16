@@ -60,9 +60,9 @@ class RedisObject:
     '''
     @classmethod
     def simple_parse_string(cls, string):
-        '''
-        no nested structure
-        '''
+        
+        #no nested structure
+        
         _resp_list = string.split("\r\n")
         head = _resp_list[0]
         try:
