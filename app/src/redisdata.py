@@ -55,9 +55,9 @@ class RedisObject:
         '''
         parse the string and return an instance 
         '''
-        #_obj, _ = cls.recursive_parse_string(string)
-        return cls.simple_parse_string(string)
-    
+        _obj, _ = cls.recursive_parse_string(string)
+        return _obj
+    '''
     @classmethod
     def simple_parse_string(cls, string):
         '''
@@ -81,7 +81,7 @@ class RedisObject:
         except:
             pass
         return cls(obj="", typ="null_bulk_str") 
-
+    '''
     @classmethod
     def recursive_parse_string(cls, string):
         '''
@@ -96,14 +96,14 @@ class RedisObject:
         if (head[0] == '+'):
             # simple string
             _str = head[1:]
-            _string_remove_head = "\r\n".join(string.split("\r\n")[1:]) + "\r\n"
+            _string_remove_head = string[len(head) + 2:]
             return cls(obj=_str, typ="str"), _string_remove_head
         elif (head[0] == '$'):
             # bulk string
             _str_len = int(head[1:])
             _string_remove_head = string[len(head) + 2:]
             _str = _string_remove_head[:_str_len]
-            return RedisObject(obj=_str, typ="bulk_str" ), _string_remove_head[_str_len + 2 :]
+            return cls(obj=_str, typ="bulk_str" ), _string_remove_head[_str_len + 2 :]
         elif (head[0] == '*'):
             _lst = []
             _arr_len = int(head[1:])
@@ -113,6 +113,6 @@ class RedisObject:
                 _node, _str = cls.recursive_parse_string(_string_remove_head)
                 _lst.append(_node)
                 _string_remove_head = _str
-            return RedisObject(obj=_lst, typ="list"), _string_remove_head
+            return cls(obj=_lst, typ="list"), _string_remove_head
         return cls(obj="", typ="null_bulk_str"), ""
 
