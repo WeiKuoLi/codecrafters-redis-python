@@ -9,7 +9,8 @@ from .src.rdb import import_rdb_file
 
 async def handle_client(reader, writer, redis_handler):
     address = writer.get_extra_info('peername')
-    print(f"Connected to {address}")
+    #debug
+    #print(f"Connected to {address}")
 
     while True:
         received_data = await reader.read(1024)
@@ -34,7 +35,8 @@ async def handle_client(reader, writer, redis_handler):
         writer.write(response_message.encode())
         await writer.drain()
 
-    print(f"Close connection with {address}")
+    #debug
+    #print(f"Close connection with {address}")
     writer.close()
     await writer.wait_closed()
 

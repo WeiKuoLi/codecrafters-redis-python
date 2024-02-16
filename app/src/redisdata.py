@@ -55,8 +55,8 @@ class RedisObject:
         '''
         parse the string and return an instance 
         '''
-        _obj, _ = cls.recursive_parse_string(string)
-        return _obj
+        #_obj, _ = cls.recursive_parse_string(string)
+        return cls.simple_parse_string(string)
     
     @classmethod
     def simple_parse_string(cls, string):
@@ -71,7 +71,7 @@ class RedisObject:
             elif(head[0] == '$'):
                 _str_len = int(head[1:])
                 _len_head = len(head)
-                _str = string[_len_head + 2:len_head + 2+_str_len]
+                _str = string[_len_head + 2: _len_head + 2+_str_len]
                 return cls(obj=_str, typ="bulk_str" )
             elif(head[0] == '*'):
                 _redis_list = []
