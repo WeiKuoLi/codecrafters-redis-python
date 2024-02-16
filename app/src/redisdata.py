@@ -80,7 +80,7 @@ class RedisObject:
                 return cls(obj=_redis_list, typ="list")
         except:
             pass
-        return cls(obj="", typ="null_bulk_str"), ""
+        return cls(obj="", typ="null_bulk_str") 
 
     @classmethod
     def recursive_parse_string(cls, string):
