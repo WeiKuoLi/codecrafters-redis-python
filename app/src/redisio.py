@@ -46,6 +46,7 @@ class RedisIOHandler:
 
     
     def parse_input(self, input_string):
+        # example
         # *2\r\n$4\r\nECHO\r\n$3\r\nhey\r\n
         # "*1\r\n$4\r\nping\r\n"
         # "+PONG\r\n"
