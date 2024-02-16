@@ -1,3 +1,5 @@
+import cProfile
+
 import argparse
 import asyncio
 from .src.redisdata import RedisObject
@@ -78,5 +80,6 @@ async def main():
         await server.serve_forever()
 
 if __name__ == "__main__":
+    #cProfile.run('asyncio.run(main())')
     asyncio.run(main())
 

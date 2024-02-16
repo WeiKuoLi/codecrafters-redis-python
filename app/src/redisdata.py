@@ -57,7 +57,7 @@ class RedisObject:
         '''
         _obj, _ = cls.recursive_parse_string(string)
         return _obj
-    '''
+    
     @classmethod
     def simple_parse_string(cls, string):
         
@@ -81,7 +81,7 @@ class RedisObject:
         except:
             pass
         return cls(obj="", typ="null_bulk_str") 
-    '''
+    
     @classmethod
     def recursive_parse_string(cls, string):
         '''
