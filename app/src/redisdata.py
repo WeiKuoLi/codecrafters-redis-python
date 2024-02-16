@@ -57,6 +57,30 @@ class RedisObject:
         '''
         _obj, _ = cls.recursive_parse_string(string)
         return _obj
+    
+    @classmethod
+    def simple_parse_string(cls, string):
+        '''
+        no nested structure
+        '''
+        _resp_list = string.split("\r\n")
+        head = _resp_list[0]
+        try:
+            if(head[0] == '+'):
+                return cls(obj=head[1:], typ="str")
+            elif(head[0] == '$'):
+                _str_len = int(head[1:])
+                _len_head = len(head)
+                _str = string[_len_head + 2:len_head + 2+_str_len]
+                return cls(obj=_str, typ="bulk_str" )
+            elif(head[0] == '*'):
+                _redis_list = []
+                for _body in _resp_lst[1:]:
+                    _redis_list.append(cls.simple_parse_string(_body))
+                return cls(obj=_redis_list, typ="list")
+        except:
+            pass
+        return cls(obj="", typ="null_bulk_str"), ""
 
     @classmethod
     def recursive_parse_string(cls, string):

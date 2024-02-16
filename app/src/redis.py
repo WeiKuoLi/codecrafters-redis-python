@@ -31,7 +31,8 @@ class RedisServer:
             assert isinstance(_key, str)
             _value = args[1]
             self.redis[_key] = _value
-            print(f"set {_key}: {_value.__repr__()} ")
+            #for debug
+            #print(f"set {_key}: {_value.__repr__()} ")
             if(len(args)>3 and args[2].obj =="px"):
                 _ps = int(args[3].obj)
                 asyncio.create_task(self.delete_key(_key, _ps))
@@ -43,7 +44,8 @@ class RedisServer:
         try:
             _key = args[0].obj
             assert isinstance(_key, str)
-            print(f"get {_key}")
+            #for debug
+            #print(f"get {_key}")
             return self.redis[_key] 
         except:
             return RedisObject.from_string("")
