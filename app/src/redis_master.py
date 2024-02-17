@@ -21,7 +21,7 @@ class RedisServerMaster(RedisServer):
         return RedisObject(obj=_info, typ="bulk_str") 
    
     def command_replconf(self, *args):
-        if(args[0] == 'listening-port'):
+        if(args[0].obj == 'listening-port'):
             self.slave_port = args[1]
         print(f"slave port is {self.slave_port}")
         return RedisObject("OK")
