@@ -81,7 +81,7 @@ class RedisServer:
             return RedisObject.from_string("")
         _info = f"role:{self.role}"
         return RedisObject(obj=_info, typ="bulk_str") 
-    
+    ''' 
     def command_replconf(self, *args):
         pass
         return RedisObject("OK")
@@ -89,3 +89,5 @@ class RedisServer:
     def command_psync(self, *args):
         pass
         return RedisObject("OK")
+    '''
+

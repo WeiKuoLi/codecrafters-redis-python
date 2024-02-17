@@ -9,6 +9,8 @@ class RedisIOHandler:
 
 
     def execute_command(self):
+        _is_master = self.redis_server.role =='master'
+        _reply_null = lambda *args: RedisObject(obj="", typ="null_bulk_str")
         handler ={"ping": self.redis_server.command_ping,
                   "PING": self.redis_server.command_ping,
                   "echo": self.redis_server.command_echo, 
@@ -23,10 +25,10 @@ class RedisIOHandler:
                   "CONFIG": self.redis_server.command_config, 
                   "info": self.redis_server.command_info, 
                   "INFO": self.redis_server.command_info, 
-                  "REPLCONF": self.redis_server.command_replconf, 
-                  "replconf": self.redis_server.command_replconf, 
-                  "PSYNC": self.redis_server.command_psync, 
-                  "psync": self.redis_server.command_psync, 
+                  "REPLCONF": self.redis_server.command_replconf if _is_master else _reply_null, 
+                  "replconf": self.redis_server.command_replconf if _is_master else _reply_null, 
+                  "PSYNC": self.redis_server.command_psync if _is_master else _reply_null, 
+                  "psync": self.redis_server.command_psync if _is_master else _reply_null, 
                  }
 
         if self.parsed_input.typ == "str" or self.parsed_input.typ == "bulk_str":
