@@ -59,7 +59,8 @@ class RedisIOHandler:
 
         # Get the port of the socket  
         _port = str(writer.transport.get_extra_info('peername')[1])
-        print(f"writer port is {_port}") 
+        _port0 = str(writer.transport.get_extra_info('peername'))
+        print(f"writer port is {_port0}") 
         # support buffering for master server only
         assert self.redis_server.role == "master"
         while (not self.buffer[_port].is_empty()):
