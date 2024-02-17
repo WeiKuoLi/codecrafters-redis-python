@@ -37,6 +37,8 @@ async def handle_client(reader, writer, redis_handler):
         writer.write(response_message.encode())
         await writer.drain()
 
+
+
     #debug
     #print(f"Close connection with {address}")
     writer.close()
