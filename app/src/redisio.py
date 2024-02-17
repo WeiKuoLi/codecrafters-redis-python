@@ -1,3 +1,4 @@
+import pdb
 from .redisdata import RedisObject
 import asyncio
 from .buffer import BufferMultiQueue
@@ -55,14 +56,9 @@ class RedisIOHandler:
         '''
         clear buffer and process each commands
         '''
-        # Access the transport object associated with the writer
-        _transport = writer.get_extra_info('transport')
-
-        # Get the socket associated with the transport
-        _socket = _transport.get_extra_info('socket')
 
         # Get the port of the socket
-        _port = _socket.getsockname()[1]
+        _port = writer.transport.get_extra_info('socket').getsockname()[1]
         print(f"writer port is {_port}") 
         # support buffering for master server only
         assert self.redis_server.role == "master"
