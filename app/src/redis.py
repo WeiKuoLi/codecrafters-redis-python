@@ -8,6 +8,7 @@ class RedisServer:
         self.redis = {}
         self.rdb_dir = "" 
         self.rdb_dbfilename = ""
+        self.redis_io_handler = None
         self.port_number = port_number
         self.role = "master"
 

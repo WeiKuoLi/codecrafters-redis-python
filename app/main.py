@@ -9,6 +9,7 @@ from .src.redis_master import RedisServerMaster
 
 from .src.rdb import import_rdb_file
 
+
 async def handle_client(reader, writer, redis_handler):
     address = writer.get_extra_info('peername')
     #debug
@@ -36,7 +37,9 @@ async def handle_client(reader, writer, redis_handler):
         
         writer.write(response_message.encode())
         await writer.drain()
-
+        
+        if(not redis_handler.buffer.is_empty()):
+            await redis_handler.process_buffer_commands(reader, writer)
 
 
     #debug

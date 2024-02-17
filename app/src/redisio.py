@@ -1,12 +1,17 @@
 from .redisdata import RedisObject
 import asyncio
+from .buffer import BufferMultiQueue
+import base64
 
+EMPTY_RDB_BASE64 = "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog=="
 class RedisIOHandler:
     def __init__(self, redis_server=None):
         self.parsed_input = None
         self.parsed_output = None
         self.redis_server = redis_server
-
+        self.redis_server.redis_io_handler = self
+        self.buffer = BufferMultiQueue() 
+    
 
     def execute_command(self):
         _is_master = self.redis_server.role =='master'
@@ -45,14 +50,38 @@ class RedisIOHandler:
                self.parsed_output = RedisObject.from_string("")
             
 
+    async def process_buffer_commands(self, reader, writer):
+        '''
+        clear buffer and process each commands
+        '''
+        # Access the transport object associated with the writer
+        _transport = writer.get_extra_info('transport')
+
+        # Get the socket associated with the transport
+        _socket = _transport.get_extra_info('socket')
+
+        # Get the port of the socket
+        _port = _socket.getsockname()[1]
+        
+        # support buffering for master server only
+        assert self.redis_server.role == "master"
+        while (not self.buffer[_port].is_empty()):
+            print(f"<process buffer commands to slave server at port {_port}>")
+            if (self.buffer[_port].dequeue() == "send_empty_rdb"):
+                _empty_rdb = base64.b64decode(EMPTY_RDB_BASE64)
+                writer.write(_empty_rdb)
+                await writer.drain()
 
     
     def parse_input(self, input_string):
-        # example
-        # *2\r\n$4\r\nECHO\r\n$3\r\nhey\r\n
-        # "*1\r\n$4\r\nping\r\n"
-        # "+PONG\r\n"
+        '''
+        redis RESP input_string -> self.parsed_input as a RedisObject
+        '''
         self.parsed_input = RedisObject.from_string(input_string)
+    
     def parse_output(self):
+        '''
+        RedisObject self.parsed_output -> output RESP string
+        '''
         return str(self.parsed_output)
 
