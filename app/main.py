@@ -2,6 +2,8 @@ import cProfile
 
 import argparse
 import asyncio
+import uuid
+
 from .src.redisdata import RedisObject
 from .src.redisio import RedisIOHandler
 from .src.redis_slave import RedisServerSlave
@@ -11,9 +13,17 @@ from .src.rdb import import_rdb_file
 
 
 async def handle_client(reader, writer, redis_handler):
-    address = writer.get_extra_info('peername')
+    client_id = str(uuid.uuid4()) 
+    while (client_id in redis_handler.session):
+        client_id = str(uuid.uuid4()) 
+    
+    redis_handler.session[client_id] = { "reader":reader,
+                                         "writer": writer,
+                                         "client_ip":None,
+                                         "client_port":None}
+    
     #debug
-    #print(f"Connected to {address}")
+    #print(f"Connected to {client_id}")
 
     while True:
         received_data = await reader.read(1024)
@@ -23,13 +33,13 @@ async def handle_client(reader, writer, redis_handler):
         received_message = received_data.decode()
         #print(f"Received {received_message} from {address}")
 
-        redis_handler.parse_input(received_message)
+        input_redisobject = redis_handler.parse_input(received_message)
         #for debug
         #print(f"Received: {redis_handler.parsed_input.__repr__()}")
-        redis_handler.execute_command()
+        output_redisobject = redis_handler.execute_command(client_id=client_id, input_redisobject=input_redisobject)
         #for debug
         #print(f"Response: {redis_handler.parsed_output.__repr__()}")
-        response_message = redis_handler.parse_output()
+        response_message = redis_handler.parse_output(output_redisobject)
         #print(f"Response {response_message} to {address}")
         
         # default to response "+PONG\r\n"

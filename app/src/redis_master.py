@@ -26,6 +26,7 @@ class RedisServerMaster(RedisServer):
         if(args[0].obj == 'listening-port'):
             self.slave_port = str(args[1].obj)
             self.redis_io_handler.buffer[self.slave_port] = BufferQueue()
+            
         print(f"slave port is {self.slave_port}")
         return RedisObject("OK")
 

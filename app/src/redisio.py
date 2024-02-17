@@ -12,9 +12,10 @@ class RedisIOHandler:
         self.redis_server = redis_server
         self.redis_server.redis_io_handler = self
         self.buffer = BufferMultiQueue() 
-    
+        self.session = {} # uuid -> port number   
 
-    def execute_command(self):
+    def execute_command(self, client_id=None, input_redisobject=None):
+
         _is_master = self.redis_server.role =='master'
         _reply_null = lambda *args: RedisObject(obj="", typ="null_bulk_str")
         handler ={"ping": self.redis_server.command_ping,
@@ -37,20 +38,25 @@ class RedisIOHandler:
                   "psync": self.redis_server.command_psync if _is_master else _reply_null, 
                  }
 
-        if self.parsed_input.typ == "str" or self.parsed_input.typ == "bulk_str":
+        if input_redisobject.typ == "str" or input_redisobject.typ == "bulk_str":
            try:
-               _cmd = str(self.parsed_input.obj)
-               self.parsed_output = handler[_cmd]()
+               _cmd = str(input_redisobject.obj)
+               output_redisobject = handler[_cmd]()
+               return output_redisobject
            except:
-               print("unknown command: ", str(self.parsed_input))
+               print("unknown command: ", str(input_redisobject))
                self.parsed_output = RedisObject.from_string("")
-        elif self.parsed_input.typ == "list":
+               return self.parsed_output
+
+        elif input_redisobject.typ == "list":
            try:
-               _cmd = str(self.parsed_input.obj[0].obj)
-               self.parsed_output = handler[_cmd](*(self.parsed_input.obj[1:]))
+               _cmd = str(input_redisobject.obj[0].obj)
+               output_redisobject = handler[_cmd](*(input_redisobject.obj[1:]))
+               return output_redisobject
            except:
-               print("unknown command: ", str(self.parsed_input))
-               self.parsed_output = RedisObject.from_string("")
+               print("unknown command: ", str(input_redisobject))
+               output_redisobject = RedisObject.from_string("")
+               return output_redisobject
             
 
     async def process_buffer_commands(self, reader, writer):
@@ -80,11 +86,11 @@ class RedisIOHandler:
         '''
         redis RESP input_string -> self.parsed_input as a RedisObject
         '''
-        self.parsed_input = RedisObject.from_string(input_string)
-    
-    def parse_output(self):
+        return RedisObject.from_string(input_string)
+
+    def parse_output(self, output_redisobject):
         '''
         RedisObject self.parsed_output -> output RESP string
         '''
-        return str(self.parsed_output)
+        return str(output_redisobject)
 
