@@ -1,6 +1,8 @@
 from .redis_base import RedisServer
 from .redisdata import RedisObject
+from .buffer import BufferQueue
 import asyncio
+
 class RedisServerMaster(RedisServer):
     '''
     Master Redis server
@@ -23,11 +25,12 @@ class RedisServerMaster(RedisServer):
     def command_replconf(self, *args):
         if(args[0].obj == 'listening-port'):
             self.slave_port = str(args[1].obj)
+            self.redis_io_handler.buffer[self.slave_port] = BufferQueue()
         print(f"slave port is {self.slave_port}")
         return RedisObject("OK")
 
     def command_psync(self, *args):
-        print(str(self.redis_io_handler.buffer))
+        print("buffer: "str(self.redis_io_handler.buffer))
         self.redis_io_handler.buffer[self.slave_port].enque("send_empty_rdb")
-        print(str(self.redis_io_handler.buffer))
+        print("buffer: "str(self.redis_io_handler.buffer))
         return RedisObject(obj=f"FULLRESYNC {self.replid} {str(self.repl_offset)}", typ="str")
