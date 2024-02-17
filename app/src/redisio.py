@@ -3,7 +3,8 @@ import asyncio
 from .buffer import BufferMultiQueue
 import base64
 
-EMPTY_RDB_BASE64 = "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog=="
+EMPTY_RDB = base64.b64decode("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==")
+EMPTY_RDB_STRING = EMPTY_RDB.decode() #'utf-8')
 class RedisIOHandler:
     def __init__(self, redis_server=None):
         self.parsed_input = None
@@ -68,8 +69,9 @@ class RedisIOHandler:
         while (not self.buffer[_port].is_empty()):
             print(f"<process buffer commands to slave server at port {_port}>")
             if (self.buffer[_port].dequeue() == "send_empty_rdb"):
-                _empty_rdb = base64.b64decode(EMPTY_RDB_BASE64)
-                writer.write(_empty_rdb)
+                _len = len(EMPTY_RDB)
+                _empty_rdb_resp = '$' + str(_len) + '\r\n' + EMPTY_RDB
+                writer.write(_empty_rdb_resp.encode())
                 await writer.drain()
 
     
