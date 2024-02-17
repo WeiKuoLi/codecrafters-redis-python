@@ -234,14 +234,14 @@ async def import_rdb_file(redis_server, file_path=None):
                 _expire_time -= current_timestamp
                 _ = [RedisObject(_key),RedisObject(_value), RedisObject("px"), RedisObject(_expire_time)]
                 if (_expire_time > 0):
-                    redis_server.command_set(*_)
+                    redis_server.command_set(RedisObject(obj='set', typ='str'), *_)
             elif(block_typ == 'fd'):
                 _expire_time, _val_typ, _key, _value = block_data
                 _expire_time -= current_timestamp/1000
                 _ = [RedisObject(_key),RedisObject(_value), RedisObject("px"), RedisObject(_expire_time) * 1000]
                 assert _val_typ == 0
                 if (_expire_time > 0):
-                    redis_server.command_set(*_)
+                    redis_server.command_set(RedisObject(obj='set', typ='str'), *_)
                 
     except Exception as e:
         # Handle any type of exception and print the type of exception

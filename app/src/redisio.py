@@ -12,9 +12,9 @@ class RedisIOHandler:
         self.redis_server = redis_server
         self.redis_server.redis_io_handler = self
         self.buffer = BufferMultiQueue() 
-        self.session = {} # uuid -> port number   
+        self.session = {} # client_id:uuid -> dict  ->  dict['client_port']   
 
-    def execute_command(self, client_id=None, input_redisobject=None):
+    def execute_command(self, client_id=None, input_redisobject=None, **kwargs):
 
         _is_master = self.redis_server.role =='master'
         _reply_null = lambda *args: RedisObject(obj="", typ="null_bulk_str")
@@ -51,7 +51,7 @@ class RedisIOHandler:
         elif input_redisobject.typ == "list":
            try:
                _cmd = str(input_redisobject.obj[0].obj)
-               output_redisobject = handler[_cmd](*(input_redisobject.obj[1:]))
+               output_redisobject = handler[_cmd](client_id=client_id, *(input_redisobject.obj))
                return output_redisobject
            except:
                print("unknown command: ", str(input_redisobject))
@@ -59,17 +59,15 @@ class RedisIOHandler:
                return output_redisobject
             
 
-    async def process_buffer_commands(self, reader, writer):
+    async def process_buffer_commands(self, reader, writer, **kwargs):
         '''
         clear buffer and process each commands
         '''
 
-        # Get the port of the socket  
-        _port = str(writer.transport.get_extra_info('peername')[1])
         
-        # temperory solve
-        _port = self.redis_server.slave_port
-        print(f"writer port is {_port}") 
+        _port = self.session[kwargs['client_id']]['client_port']
+
+        print(f"processing replica at port  {_port}") 
         # support buffering for master server only
         assert self.redis_server.role == "master"
         while (not self.buffer[_port].is_empty()):

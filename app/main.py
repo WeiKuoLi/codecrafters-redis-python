@@ -47,9 +47,12 @@ async def handle_client(reader, writer, redis_handler):
         
         writer.write(response_message.encode())
         await writer.drain()
-        
-        if(not redis_handler.buffer.is_empty()):
-            await redis_handler.process_buffer_commands(reader, writer)
+       
+
+        if(redis_handler.session[client_id]["client_port"] is not None):
+            _p = redis_handler.session[client_id]["client_port"]
+            if(not redis_handler.buffer[_p].is_empty()):
+                await redis_handler.process_buffer_commands(reader, writer, client_id=client_id)
 
 
     #debug

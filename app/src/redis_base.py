@@ -17,16 +17,16 @@ class RedisServer:
         await asyncio.sleep(millisecond / 1000)
         del self.redis[_key]
 
-    def command_ping(self, *args):
+    def command_ping(self, *args, **kwargs):
         return RedisObject.from_string("+PONG\r\n")
     
-    def command_echo(self, *args):
+    def command_echo(self, *args, **kwargs):
         try: 
             return args[0]
         except:
             return RedisObject.from_string("")
     
-    def command_set(self, *args):
+    def command_set(self, *args, **kwargs):
         try:
             _key = args[0].obj
             assert isinstance(_key, str)
@@ -41,7 +41,7 @@ class RedisServer:
         except:
             return RedisObject.from_string("")
     
-    def command_get(self, *args):
+    def command_get(self, *args, **kwargs):
         try:
             _key = args[0].obj
             assert isinstance(_key, str)
@@ -51,7 +51,7 @@ class RedisServer:
         except:
             return RedisObject.from_string("")
     
-    def command_config(self, *args): 
+    def command_config(self, *args, **kwargs): 
         try:
             assert(args[0].obj == 'get' or args[0].obj =='GET')
             _config_key =  args[1]
@@ -66,7 +66,7 @@ class RedisServer:
         except:
             return RedisObject.from_string("")
     
-    def command_keys(self, *args):
+    def command_keys(self, *args, **kwargs):
         try:
             _output = RedisObject(obj=[])
             for _key in self.redis:
@@ -77,18 +77,8 @@ class RedisServer:
         except:
             return RedisObject.from_string("")
     
-    def command_info(self, *args):
+    def command_info(self, *args, **kwargs):
         if args[0].obj != "replication":
             return RedisObject.from_string("")
         _info = f"role:{self.role}"
         return RedisObject(obj=_info, typ="bulk_str") 
-    ''' 
-    def command_replconf(self, *args):
-        pass
-        return RedisObject("OK")
-    
-    def command_psync(self, *args):
-        pass
-        return RedisObject("OK")
-    '''
-
