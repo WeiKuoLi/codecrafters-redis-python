@@ -24,11 +24,12 @@ class RedisServerMaster(RedisServer):
    
     def command_replconf(self, *args, **kwargs):
         if(args[0].obj == 'listening-port'):
-            self.slave_port.append( str(args[1].obj))
+            slave_port = str(args[1].obj)
+            self.slave_port.append(slave_port)
             session_client_id = kwargs['client_id']
             self.redis_io_handler.session[session_client_id]['client_port'] = str(args[1].obj)
 
-            self.redis_io_handler.buffer[self.slave_port] = BufferQueue()
+            self.redis_io_handler.buffer[slave_port] = BufferQueue()
             
         print(f"slave port is {self.slave_port}")
         return RedisObject("OK")
