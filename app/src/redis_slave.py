@@ -1,4 +1,4 @@
-from .redis import RedisServer
+from .redis_base import RedisServer
 from .redisdata import RedisObject
 import asyncio
 class RedisServerSlave(RedisServer):
