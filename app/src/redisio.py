@@ -69,7 +69,7 @@ class RedisIOHandler:
             print(f"<process buffer commands to slave server at port {_port}>")
             if (self.buffer[_port].dequeue() == "send_empty_rdb"):
                 _len = len(EMPTY_RDB_STRING)
-                _empty_rdb_resp = '$' + str(_len) + "\r\n" + EMPTY_RDB_STRING
+                _empty_rdb_resp = '$' + str(_len) + "\r\n" + EMPTY_RDB_STRING +"\r\n"
                # pdb.set_trace()
                 writer.write(_empty_rdb_resp.encode())
                 await writer.drain()
