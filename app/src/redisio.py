@@ -61,6 +61,8 @@ class RedisIOHandler:
 
         # Get the port of the socket  
         _port = str(writer.transport.get_extra_info('peername')[1])
+        
+        # temperory solve
         _port = self.redis_server.slave_port
         print(f"writer port is {_port}") 
         # support buffering for master server only
@@ -69,8 +71,9 @@ class RedisIOHandler:
             print(f"<process buffer commands to slave server at port {_port}>")
             if (self.buffer[_port].dequeue() == "send_empty_rdb"):
                 _len = len(EMPTY_RDB_STRING)
-                _empty_rdb_resp = '$' + str(_len) + "\r\n" + EMPTY_RDB_STRING +"\r\n"
-               # pdb.set_trace()
+                _empty_rdb_resp = '$' + str(_len) + "\r\n" + EMPTY_RDB_STRING 
+                print(_empty_rdb_resp)
+                print(_empty_rdb_resp.encode().decode('latin-1'))
                 writer.write(_empty_rdb_resp.encode())
                 await writer.drain()
 
