@@ -23,9 +23,11 @@ class RedisServerMaster(RedisServer):
     def command_replconf(self, *args):
         if(args[0] == 'listening-port'):
             self.slave_port = args[1]
+        print(f"slave port is {self.slave_port}"))
         return RedisObject("OK")
 
     def command_psync(self, *args):
+        print(str(self.redis_io_handler.buffer))
         self.redis_io_handler.buffer[self.slave_port].enque("send_empty_rdb")
         print(str(self.redis_io_handler.buffer))
         return RedisObject(obj=f"FULLRESYNC {self.replid} {str(self.repl_offset)}", typ="str")
