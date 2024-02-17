@@ -31,6 +31,7 @@ class RedisServerMaster(RedisServer):
 
     def command_psync(self, *args):
         print("buffer: ", str(self.redis_io_handler.buffer))
+        print("redisiohandler: ", self.redis_io_handler)
         self.redis_io_handler.buffer[self.slave_port].enque("send_empty_rdb")
         print("buffer: ", str(self.redis_io_handler.buffer))
         return RedisObject(obj=f"FULLRESYNC {self.replid} {str(self.repl_offset)}", typ="str")
