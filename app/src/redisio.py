@@ -72,7 +72,7 @@ class RedisIOHandler:
             if (self.buffer[_port].dequeue() == "send_empty_rdb"):
                 _len = len(EMPTY_RDB_STRING)
                 _empty_rdb_resp_encode = ('$' + str(_len) + "\r\n").encode() + EMPTY_RDB 
-                print("rdb ", _empty_rdb_resp_encode.decode('latin-1')
+                print("rdb ", _empty_rdb_resp_encode.decode('latin-1'))
                 writer.write(_empty_rdb_resp_encode)
                 await writer.drain()
 
