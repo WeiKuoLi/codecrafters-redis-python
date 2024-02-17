@@ -43,12 +43,14 @@ class RedisIOHandler:
                _cmd = str(self.parsed_input.obj)
                self.parsed_output = handler[_cmd]()
            except:
+               print("unknown command: ", str(self.parsed_input))
                self.parsed_output = RedisObject.from_string("")
         elif self.parsed_input.typ == "list":
            try:
                _cmd = str(self.parsed_input.obj[0].obj)
                self.parsed_output = handler[_cmd](*(self.parsed_input.obj[1:]))
            except:
+               print("unknown command: ", str(self.parsed_input))
                self.parsed_output = RedisObject.from_string("")
             
 
@@ -67,7 +69,8 @@ class RedisIOHandler:
             print(f"<process buffer commands to slave server at port {_port}>")
             if (self.buffer[_port].dequeue() == "send_empty_rdb"):
                 _len = len(EMPTY_RDB_STRING)
-                _empty_rdb_resp = '$' + str(_len) + '\r\n' + EMPTY_RDB_STRING
+                _empty_rdb_resp = '$' + str(_len) + "\r\n" + EMPTY_RDB_STRING
+               # pdb.set_trace()
                 writer.write(_empty_rdb_resp.encode())
                 await writer.drain()
 
