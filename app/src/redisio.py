@@ -4,7 +4,7 @@ from .buffer import BufferMultiQueue
 import base64
 
 EMPTY_RDB = base64.b64decode("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==")
-EMPTY_RDB_STRING = EMPTY_RDB.decode() #'utf-8')
+EMPTY_RDB_STRING = EMPTY_RDB.decode('latin-1')
 class RedisIOHandler:
     def __init__(self, redis_server=None):
         self.parsed_input = None
