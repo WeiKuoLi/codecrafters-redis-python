@@ -23,7 +23,7 @@ class RedisServerMaster(RedisServer):
     def command_replconf(self, *args):
         if(args[0] == 'listening-port'):
             self.slave_port = args[1]
-        print(f"slave port is {self.slave_port}"))
+        print(f"slave port is {self.slave_port}")
         return RedisObject("OK")
 
     def command_psync(self, *args):
