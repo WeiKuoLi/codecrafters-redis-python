@@ -57,8 +57,8 @@ class RedisIOHandler:
         clear buffer and process each commands
         '''
 
-        # Get the port of the socket  (reader)
-        _port = str(reader.transport.get_extra_info('socket').getsockname()[1])
+        # Get the port of the socket  
+        _port = str(writer.transport.get_extra_info('peername')[1])
         print(f"writer port is {_port}") 
         # support buffering for master server only
         assert self.redis_server.role == "master"
