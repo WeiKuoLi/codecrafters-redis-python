@@ -59,15 +59,15 @@ class RedisIOHandler:
 
         # Get the port of the socket  
         _port = str(writer.transport.get_extra_info('peername')[1])
-        _port0 = str(writer.transport.get_extra_info('peername'))
-        print(f"writer port is {_port0}") 
+        _port = self.redis_server.slave_port
+        print(f"writer port is {_port}") 
         # support buffering for master server only
         assert self.redis_server.role == "master"
         while (not self.buffer[_port].is_empty()):
             print(f"<process buffer commands to slave server at port {_port}>")
             if (self.buffer[_port].dequeue() == "send_empty_rdb"):
-                _len = len(EMPTY_RDB)
-                _empty_rdb_resp = '$' + str(_len) + '\r\n' + EMPTY_RDB
+                _len = len(EMPTY_RDB_STRING)
+                _empty_rdb_resp = '$' + str(_len) + '\r\n' + EMPTY_RDB_STRING
                 writer.write(_empty_rdb_resp.encode())
                 await writer.drain()
 
