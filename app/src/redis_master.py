@@ -1,6 +1,6 @@
-from .redis_base import RedisServer
-from .redisdata import RedisObject
-from .buffer import BufferQueue
+from app.src.redis_base import RedisServer
+from app.src.redisdata import RedisObject
+from app.src.buffer import BufferQueue
 import asyncio
 
 class RedisServerMaster(RedisServer):

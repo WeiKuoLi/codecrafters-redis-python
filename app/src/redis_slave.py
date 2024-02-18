@@ -1,5 +1,5 @@
-from .redis_base import RedisServer
-from .redisdata import RedisObject
+from app.src.redis_base import RedisServer
+from app.src.redisdata import RedisObject
 import asyncio
 class RedisServerSlave(RedisServer):
     '''

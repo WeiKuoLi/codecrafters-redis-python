@@ -1,7 +1,7 @@
 import pdb
-from .redisdata import RedisObject
+from app.src.redisdata import RedisObject
 import asyncio
-from .buffer import BufferMultiQueue
+from app.src.buffer import BufferMultiQueue
 import base64
 
 EMPTY_RDB = base64.b64decode("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==")

@@ -1,6 +1,6 @@
 import os
 import asyncio
-from .redisdata import RedisObject
+from app.src.redisdata import RedisObject
 #import pdb
 import struct
 from datetime import datetime

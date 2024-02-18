@@ -4,12 +4,12 @@ import argparse
 import asyncio
 import uuid
 
-from .src.redisdata import RedisObject
-from .src.redisio import RedisIOHandler
-from .src.redis_slave import RedisServerSlave
-from .src.redis_master import RedisServerMaster
+from app.src.redisdata import RedisObject
+from app.src.redisio import RedisIOHandler
+from app.src.redis_slave import RedisServerSlave
+from app.src.redis_master import RedisServerMaster
 
-from .src.rdb import import_rdb_file
+from app.src.rdb import import_rdb_file
 
 
 async def handle_client(reader, writer, redis_handler):

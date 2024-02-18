@@ -1,4 +1,4 @@
-from .redisdata import RedisObject
+from app.src.redisdata import RedisObject
 import asyncio
 class RedisServer:
     '''
