@@ -39,25 +39,26 @@ class RedisIOHandler:
                  }
 
         if input_redisobject.typ == "str" or input_redisobject.typ == "bulk_str":
-           try:
-               _cmd = str(input_redisobject.obj)
-               output_redisobject = handler[_cmd]()
-               return output_redisobject
-           except:
-               print("unknown command str: ", str(input_redisobject))
-               self.parsed_output = RedisObject.from_string("")
-               return self.parsed_output
+            try:
+                _cmd = str(input_redisobject.obj)
+                output_redisobject = handler[_cmd]()
+                return output_redisobject
+            except:
+                print("unknown command str: ", str(input_redisobject))
+                self.parsed_output = RedisObject.from_string("")
+                return self.parsed_output
 
         elif input_redisobject.typ == "list":
-           try:
-               _cmd = str(input_redisobject.obj[0].obj)
-               output_redisobject = handler[_cmd](client_id=client_id, command=_cmd, *(input_redisobject.obj[1:]))
-               print(f"output_redisobject line55 in redisio: {str(output_redisobject)}")
-               return output_redisobject
-           except:
-               print("unknown command list: ", str(input_redisobject))
-               output_redisobject = RedisObject.from_string("")
-               return output_redisobject
+            print("input_redisobject is ",str(input_redisobject))       
+            try:
+                _cmd = str(input_redisobject.obj[0].obj)
+                output_redisobject = handler[_cmd](client_id=client_id, command=_cmd, *(input_redisobject.obj[1:]))
+                print(f"output_redisobject line55 in redisio: {str(output_redisobject)}")
+                return output_redisobject
+            except:
+                print("unknown command list: ", str(input_redisobject))
+                output_redisobject = RedisObject.from_string("")
+                return output_redisobject
             
 
     async def process_buffer_commands(self, reader, writer, **kwargs):
