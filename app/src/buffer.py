@@ -47,7 +47,7 @@ class BufferQueue:
     def __str__(self):
         _str = ""
         for _ in self.buffer:
-            _str += " " + _
+            _str += " " + str(_)
             
         return _str
 
