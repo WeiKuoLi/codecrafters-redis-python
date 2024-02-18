@@ -27,9 +27,13 @@ class RedisServer:
             return RedisObject.from_string("")
     
     def command_set(self, *args, **kwargs):
+        print(args, kwargs)
         try:
             _key = args[0].obj
-            assert isinstance(_key, str)
+            
+            if not isinstance(_key, str):
+                print(_key, "is not string")
+
             _value = args[1]
             self.redis[_key] = _value
             #for debug
