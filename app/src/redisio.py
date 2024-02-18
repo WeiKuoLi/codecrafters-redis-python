@@ -32,8 +32,8 @@ class RedisIOHandler:
                   "CONFIG": self.redis_server.command_config, 
                   "info": self.redis_server.command_info, 
                   "INFO": self.redis_server.command_info, 
-                  "REPLCONF": self.redis_server.command_replconf if _is_master else _reply_null, 
-                  "replconf": self.redis_server.command_replconf if _is_master else _reply_null, 
+                  "REPLCONF": self.redis_server.command_replconf , 
+                  "replconf": self.redis_server.command_replconf , 
                   "PSYNC": self.redis_server.command_psync if _is_master else _reply_null, 
                   "psync": self.redis_server.command_psync if _is_master else _reply_null, 
                  }
@@ -70,15 +70,20 @@ class RedisIOHandler:
         print(f"processing replica at port  {_port}") 
         # support buffering for master server only
         assert self.redis_server.role == "master"
+        
         while (not self.buffer[_port].is_empty()):
             print(f"<process buffer commands to slave server at port {_port}>")
-            if (self.buffer[_port].dequeue() == "send_empty_rdb"):
+            oldest_command_redisobjecet = self.buffer[_port].dequeue()
+            if (oldest_command_redisobject.obj == "send_empty_rdb"):
                 _len = len(EMPTY_RDB)
                 _empty_rdb_resp_encode = ('$' + str(_len) + "\r\n").encode() + EMPTY_RDB 
                 print("rdb ", _empty_rdb_resp_encode.decode('latin-1'))
                 writer.write(_empty_rdb_resp_encode)
                 await writer.drain()
-
+            else:
+                _resp_string = str(oldest_command_redisobject)
+                writer.write(_resp_string.encode())
+                await writer.drain()
     
     def parse_input(self, input_string):
         '''
