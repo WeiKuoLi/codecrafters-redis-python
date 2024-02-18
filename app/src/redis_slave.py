@@ -31,7 +31,7 @@ class RedisServerSlave(RedisServer):
             while(True):
                 response = await reader.readline()
                 response_obj = RedisObject.from_string(response.decode('latin-1'))
-                print("Response From Server:", response_obj.__repr__())
+                print("Response From Server to slave:", response_obj.__repr__())
                 _message="+OK\r\n"
                 writer.write(str(_message).encode())
                 await writer.drain()
