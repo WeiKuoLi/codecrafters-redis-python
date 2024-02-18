@@ -83,6 +83,9 @@ class RedisServerSlave(RedisServer):
             response = await reader.readline()
             response_obj = RedisObject.from_string(response.decode())
             print("Response From Server:", response_obj.__repr__())
+            response = await reader.readline()
+            response_obj = RedisObject.from_string(response.decode())
+            print("Response From Server:", response_obj.__repr__())
 
    
     def command_replconf(self, *args, **kwargs):
