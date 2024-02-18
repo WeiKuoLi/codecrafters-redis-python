@@ -2,7 +2,7 @@ import socket
 
 # Define the server's IP address and port number
 server_ip = "localhost"  # Replace with the server's actual IP address
-server_port = 6379      # Replace with the server's actual port number
+server_port = 6384      # Replace with the server's actual port number
 
 # Create a socket object for the client
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

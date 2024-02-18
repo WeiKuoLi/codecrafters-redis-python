@@ -81,6 +81,7 @@ class RedisIOHandler:
                 writer.write(_empty_rdb_resp_encode)
                 await writer.drain()
             else:
+                pdb.set_trace()
                 _resp_string = str(oldest_command_redisobject)
                 writer.write(_resp_string.encode())
                 await writer.drain()
