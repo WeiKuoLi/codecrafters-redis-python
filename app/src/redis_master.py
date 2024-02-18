@@ -55,5 +55,6 @@ class RedisServerMaster(RedisServer):
 
         for k, v in self.redis_io_handler.buffer.items():
             self.redis_io_handler.buffer[k].enqueue(command_redisobject)
+            print(f"{str(self.redis_io_handler.buffer[k])}")
             print(f"buffer[{k}] set to {str(v.peek())}")
         return _res
