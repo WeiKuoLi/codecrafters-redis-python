@@ -47,7 +47,7 @@ class RedisServerMaster(RedisServer):
         return RedisObject(obj=f"FULLRESYNC {self.replid} {str(self.repl_offset)}", typ="str")
     
     def command_set(self, *args, **kwargs):
-        super().command_set(*args, **kwargs)
+        _res = super().command_set(*args, **kwargs)
         command_redisobj = RedisObject(obj=[], typ='lst')
         command_redisobj.append(RedisObject(obj='set', typ='bulk_str'))
         for _arg in args:
@@ -55,3 +55,4 @@ class RedisServerMaster(RedisServer):
 
         for k, v in self.redis_io_handler.buffer.items():
             v.enqueue(command_redisobject)
+        return _res
