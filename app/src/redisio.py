@@ -83,6 +83,7 @@ class RedisIOHandler:
             else:
                 pdb.set_trace()
                 _resp_string = str(oldest_command_redisobject)
+                print(f"send {_resp_string} to {_port}")
                 writer.write(_resp_string.encode())
                 await writer.drain()
     
