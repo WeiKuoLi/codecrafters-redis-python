@@ -30,7 +30,7 @@ class RedisServerSlave(RedisServer):
             print('testing at redis_slave.py 30')
             while(True):
                 response = await reader.readline()
-                response_obj = RedisObject.from_string(response.decode())
+                response_obj = RedisObject.from_string(response.decode('latin-1'))
                 print("Response From Server:", response_obj.__repr__())
                 _message="+OK\r\n"
                 writer.write(str(_message).encode())
