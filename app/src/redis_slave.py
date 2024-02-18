@@ -27,6 +27,15 @@ class RedisServerSlave(RedisServer):
             await self.replconf_master(reader, writer)
             await self.psync_master(reader, writer)
             # Close the connection
+            print('testing at redis_slave.py 30')
+            while(True):
+                response = await reader.readline()
+                response_obj = RedisObject.from_string(response.decode())
+                print("Response From Server:", response_obj.__repr__())
+                _message="+OK\r\n"
+                writer.write(str(_message).encode())
+                await writer.drain()
+            
             writer.close()
             await writer.wait_closed()
         except Exception as e:
@@ -80,9 +89,6 @@ class RedisServerSlave(RedisServer):
             await writer.drain()
             print("wait response")
             # Read the response
-            response = await reader.readline()
-            response_obj = RedisObject.from_string(response.decode())
-            print("Response From Server:", response_obj.__repr__())
             response = await reader.readline()
             response_obj = RedisObject.from_string(response.decode())
             print("Response From Server:", response_obj.__repr__())
