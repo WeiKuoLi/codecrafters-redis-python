@@ -44,7 +44,7 @@ class RedisIOHandler:
                output_redisobject = handler[_cmd]()
                return output_redisobject
            except:
-               print("unknown command: ", str(input_redisobject))
+               print("unknown command str: ", str(input_redisobject))
                self.parsed_output = RedisObject.from_string("")
                return self.parsed_output
 
@@ -55,7 +55,7 @@ class RedisIOHandler:
                print(f"output_redisobject line55 in redisio: {str(output_redisobject)}")
                return output_redisobject
            except:
-               print("unknown command: ", str(input_redisobject))
+               print("unknown command list: ", str(input_redisobject))
                output_redisobject = RedisObject.from_string("")
                return output_redisobject
             
