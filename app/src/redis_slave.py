@@ -28,9 +28,10 @@ class RedisServerSlave(RedisServer):
             await self.psync_master(reader, writer)
             # Close the connection
             print('testing at redis_slave.py 30')
-            while(True):
+            while True:
                 response = await reader.readline()
                 response_obj = RedisObject.from_string(response.decode('latin-1'))
+                
                 print("Response From Server to slave:", response_obj.__repr__())
                 _message="+OK\r\n"
                 writer.write(str(_message).encode())
