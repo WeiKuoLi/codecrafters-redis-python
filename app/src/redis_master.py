@@ -48,7 +48,7 @@ class RedisServerMaster(RedisServer):
     
     def command_set(self, *args, **kwargs):
         _res = super().command_set(*args, **kwargs)
-        
+        print("response from command_set of root class", str(_res)) 
         command_redisobject = RedisObject(obj=[], typ='list')
         command_redisobject.obj.append(RedisObject(obj='SET', typ='bulk_str'))
         for _arg in args:

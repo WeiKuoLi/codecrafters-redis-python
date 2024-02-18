@@ -52,6 +52,7 @@ class RedisIOHandler:
            try:
                _cmd = str(input_redisobject.obj[0].obj)
                output_redisobject = handler[_cmd](client_id=client_id, command=_cmd, *(input_redisobject.obj[1:]))
+               print(f"output_redisobject line55 in redisio: {str(output_redisobject)}")
                return output_redisobject
            except:
                print("unknown command: ", str(input_redisobject))
