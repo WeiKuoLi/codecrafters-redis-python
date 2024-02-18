@@ -45,8 +45,8 @@ class RedisIOHandler:
                 return output_redisobject
             except:
                 print("unknown command str: ", str(input_redisobject))
-                self.parsed_output = RedisObject.from_string("")
-                return self.parsed_output
+                output_redisobject = RedisObject.from_string("")
+                return output_redisobject
 
         elif input_redisobject.typ == "list":
             print("input_redisobject is ",str(input_redisobject))       
