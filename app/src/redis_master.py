@@ -49,9 +49,9 @@ class RedisServerMaster(RedisServer):
     def command_set(self, *args, **kwargs):
         _res = super().command_set(*args, **kwargs)
         command_redisobject = RedisObject(obj=[], typ='lst')
-        command_redisobject.append(RedisObject(obj='set', typ='bulk_str'))
+        command_redisobject.obj.append(RedisObject(obj='set', typ='bulk_str'))
         for _arg in args:
-            command_redisobject.append(_arg)
+            command_redisobject.obj.append(_arg)
 
         for k, v in self.redis_io_handler.buffer.items():
             v.enqueue(command_redisobject)
