@@ -82,13 +82,11 @@ class RedisIOHandler:
                 print("rdb ", _empty_rdb_resp_encode.decode('latin-1'))
                 writer.write(_empty_rdb_resp_encode)
                 await writer.drain()
-            '''
             else:
                 _resp_string = str(oldest_command_redisobject)
                 print(f"send {_resp_string} to {_port}")
                 writer.write(_resp_string.encode())
                 await writer.drain()
-            '''
     def parse_input(self, input_string):
         '''
         redis RESP input_string -> self.parsed_input as a RedisObject
