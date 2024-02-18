@@ -2,7 +2,6 @@ from .redis_base import RedisServer
 from .redisdata import RedisObject
 from .buffer import BufferQueue
 import asyncio
-import pdb
 
 class RedisServerMaster(RedisServer):
     '''
@@ -43,7 +42,6 @@ class RedisServerMaster(RedisServer):
         print("redisiohandler: ", self.redis_io_handler)
         print("buffer: ", str(self.redis_io_handler.buffer[slave_port]))
        # self.redis_io_handler.buffer[slave_port].enqueue("send_empty_rdb")
-        pdb.set_trace()
         self.redis_io_handler.buffer[slave_port].enqueue(RedisObject(obj="send_empty_rdb", typ="str"))
         #print(f"buffer[{self.slave_port}]: ", str(self.redis_io_handler.buffer[slave_port]))
         return RedisObject(obj=f"FULLRESYNC {self.replid} {str(self.repl_offset)}", typ="str")
