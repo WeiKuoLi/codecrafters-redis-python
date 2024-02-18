@@ -45,3 +45,13 @@ class RedisServerMaster(RedisServer):
         self.redis_io_handler.buffer[slave_port].enqueue(RedisObject(obj="send_empty_rdb", typ="str"))
         #print(f"buffer[{self.slave_port}]: ", str(self.redis_io_handler.buffer[slave_port]))
         return RedisObject(obj=f"FULLRESYNC {self.replid} {str(self.repl_offset)}", typ="str")
+    
+    def command_set(self, *args, **kwargs):
+        super().command_set(*args, **kwargs)
+        command_redisobj = RedisObject(obj=[], typ='lst')
+        command_redisobj.append(RedisObject(obj='set', typ='bulk_str'))
+        for _arg in args:
+            command_redisobj.append(_arg)
+
+        for k, v in self.redis_io_handler.buffer.items():
+            v.enqueue(command_redisobject)
