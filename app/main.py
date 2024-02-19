@@ -86,12 +86,14 @@ async def handle_client(reader, writer, redis_handler):
              
             if(not redis_handler.buffer.is_empty()):
                 print("app.main 88: buffer is not empty", str(redis_handler.buffer))
-                _p = redis_handler.session[client_id]["client_port"]
-                print(f"buffer[{_p}] is", str(redis_handler.buffer[_p]))
-            
+                try:
+                    _p = redis_handler.session[client_id]["client_port"]
+                    print(f"buffer[{_p}] is", str(redis_handler.buffer[_p]))
+                except:
+                    pass
             if(redis_handler.session[client_id]["client_port"] is not None):
                 _p = redis_handler.session[client_id]["client_port"]
-                if(not redis_handler.buffer[_p].is_empty()):
+                if(_p is not None and not redis_handler.buffer[_p].is_empty()):
                    asyncio.create_task( redis_handler.process_buffer_commands(reader, writer, client_id=client_id))
              
     except:
