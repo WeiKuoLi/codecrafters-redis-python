@@ -68,7 +68,7 @@ class RedisIOHandler:
         '''
         clear buffer and process each commands
         '''
-
+        print("CLEARING BUFFER")
         
         _port = self.session[kwargs['client_id']]['client_port']
 
@@ -92,6 +92,7 @@ class RedisIOHandler:
                 print(f"send {_resp_string} to {_port}")
                 writer.write(_resp_string.encode())
                 await writer.drain()
+        print("END CLEARING BUFFER")
     def parse_input(self, input_string):
         '''
         redis RESP input_string -> self.parsed_input as a RedisObject
