@@ -55,7 +55,7 @@ class RedisServerMaster(RedisServer):
         print("in master server command_set prepare propagate: ", str(command_redisobject)) 
         for k, v in self.redis_io_handler.buffer.items():
             self.redis_io_handler.buffer[k].enqueue(command_redisobject)
-            print(f"buffered queued: {str(self.redis_io_handler.buffer[k])}")
+            print(f"{k} buffered queued: {str(self.redis_io_handler.buffer[k])}")
             #print(f"size {buffer[k].size()} buffer[{k}] set to {str(v.peek())}")
         
         return _res
