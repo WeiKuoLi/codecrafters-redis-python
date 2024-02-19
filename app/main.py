@@ -85,7 +85,7 @@ async def handle_client(reader, writer, redis_handler):
            
              
             if(not redis_handler.buffer.is_empty()):
-                print("buffer is not empty", str(redis_handler.buffer))
+                print("app.main 88: buffer is not empty", str(redis_handler.buffer))
                 _p = redis_handler.session[client_id]["client_port"]
                 print(f"buffer[{_p}] is", str(redis_handler.buffer[_p]))
             

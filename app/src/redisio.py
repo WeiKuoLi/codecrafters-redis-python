@@ -85,13 +85,13 @@ class RedisIOHandler:
                 _len = len(EMPTY_RDB)
                 _empty_rdb_resp_encode = ('$' + str(_len) + "\r\n").encode() + EMPTY_RDB 
                 print("rdb ", _empty_rdb_resp_encode.decode('latin-1'))
-                writer.write(_empty_rdb_resp_encode)
-                await writer.drain()
+                #writer.write(_empty_rdb_resp_encode)
+                #await writer.drain()
             else:# //list
                 _resp_string = str(oldest_command_redisobject)
                 print(f"send {_resp_string} to {_port}")
-                writer.write(_resp_string.encode())
-                await writer.drain()
+                #writer.write(_resp_string.encode())
+                #await writer.drain()
         print("END CLEARING BUFFER")
     def parse_input(self, input_string):
         '''

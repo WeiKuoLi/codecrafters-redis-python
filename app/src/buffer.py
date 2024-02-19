@@ -41,13 +41,13 @@ class BufferQueue:
     def __repl__(self):
         _str = ""
         for _ in self.buffer:
-            _str += " " + str(_)
+            _str += " " + (_).__repr__()
             
         return _str
     def __str__(self):
         _str = ""
         for _ in self.buffer:
-            _str += " " + str(_)
+            _str += " " + (_).__repr__()
             
         return _str
 
