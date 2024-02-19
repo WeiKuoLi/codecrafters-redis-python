@@ -101,9 +101,9 @@ class RedisServerSlave(RedisServer):
                 while (not response):
                     response = await reader.readline()
                 response_obj = RedisObject.from_string(response.decode('latin-1'))
+                #!!get RDB here 
+                print(f"Receive rdb{len(response)} From Server:", response_obj.__repr__())
             '''
-            #!!get RDB here 
-            print(f"Receive rdb{len(response)} From Server:", response_obj.__repr__())
    
     def command_replconf(self, *args, **kwargs):
         if(args[0].obj == 'GETACK' or args[0].obj == 'getack'):

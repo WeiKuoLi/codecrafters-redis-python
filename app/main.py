@@ -14,10 +14,12 @@ from app.src.rdb import import_rdb_file
 async def handle_replica(reader, writer, redis_handler):
     try:
         await redis_handler.redis_server.hand_shake(reader,writer)
+        print("handshake with master was successful")
         while True:
+
             received_data = await reader.read(1024)
             if not received_data:
-                break
+                continue
 
             received_message = received_data.decode()
             print(f"Received {received_message} from master server {address}")
@@ -129,10 +131,14 @@ async def main():
         replica_reader, replica_writer = await asyncio.open_connection(_master_host,_master_port)
        # redis_replica_handler = RedisIOHandler(redis_server=red)
         replica_comm_task = asyncio.create_task(handle_replica(replica_reader, replica_writer, redis_handler))
-        #await replica_comm_task
-    async with server:
-        print('Server Running')
-        await server.serve_forever()
+        async with server:
+            print('Server Running')
+            await server.serve_forever()
+            await replica_comm_task
+    else:
+        async with server:
+            print('Server Running')
+            await server.serve_forever()
 
 if __name__ == "__main__":
     #cProfile.run('asyncio.run(main())')
