@@ -16,8 +16,8 @@ async def handle_replica(reader, writer, redis_handler):
         await redis_handler.redis_server.hand_shake(reader,writer)
         print("handshake with master was successful")
         while True:
-            await asyncio.sleep(2)
-            print('hi')
+           # await asyncio.sleep(2)
+            #print('hi')
             received_data = await reader.read(1024)
             if not received_data:
                 break
