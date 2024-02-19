@@ -79,7 +79,7 @@ class RedisIOHandler:
         while (not self.buffer[_port].is_empty()):
             print(f"{str(self.buffer[_port])}")
             print(f"<process buffer commands to slave server at port {_port}>")
-            oldest_command_redisobject = self.buffer[_port].dequeue()
+            oldest_command_redisobject = self.buffer[_port].dequeue() #dequeue
             print(f"<process buffer command {str(oldest_command_redisobject)}")
             if (oldest_command_redisobject.obj == "send_empty_rdb"):
                 _len = len(EMPTY_RDB)
