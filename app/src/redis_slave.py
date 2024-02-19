@@ -17,30 +17,30 @@ class RedisServerSlave(RedisServer):
         self.master_replid = "?"
         self.master_repl_offset = -1
     
-    async def hand_shake(self):
+    async def hand_shake(self, reader, writer):
         try:
             print("open connection")
             # Open a connection to the server
-            reader, writer = await asyncio.open_connection(self.master_host, self.master_port)
+            # reader, writer = await asyncio.open_connection(self.master_host, self.master_port)
         
             await self.ping_master(reader, writer)
             await self.replconf_master(reader, writer)
             await self.psync_master(reader, writer)
             # Close the connection
-            print('testing at redis_slave.py 30')
-            while True:
-                response = await reader.readline()
-                if not response:
-                    break
-                response_obj = RedisObject.from_string(response.decode('latin-1'))
+           # print('testing at redis_slave.py 30')
+          #  for i in range(5):
+           #     response = await reader.readline()
+           #     if not response:
+           #         break
+           #     response_obj = RedisObject.from_string(response.decode('latin-1'))
                 
-                print("Response From Server to slave:", response_obj.__repr__())
-                _message="+OK\r\n"
-                writer.write(str(_message).encode())
-                await writer.drain()
+           #     print("Response From Server to slave:", response_obj.__repr__())
+           #     _message="+OK\r\n"
+           #     writer.write(str(_message).encode())
+           #     await writer.drain()
             
-            writer.close()
-            await writer.wait_closed()
+           # writer.close()
+           # await writer.wait_closed()
         except Exception as e:
             print("Error:", e)
 
@@ -95,7 +95,14 @@ class RedisServerSlave(RedisServer):
             response = await reader.readline()
             response_obj = RedisObject.from_string(response.decode())
             print("Response From Server:", response_obj.__repr__())
-
+            
+            for i in range(10):
+                # receive rdb
+                response = None
+                while (not response):
+                    response = await reader.readline()
+                response_obj = RedisObject.from_string(response.decode('latin-1'))
+            print(f"Receive rdb{len(response)} From Server:", response_obj.__repr__())
    
     def command_replconf(self, *args, **kwargs):
         if(args[0].obj == 'GETACK' or args[0].obj == 'getack'):
