@@ -100,16 +100,16 @@ async def handle_client(reader, writer, redis_handler):
              
     except:
         print("connection with {client_id} encounter error")
+    finally:
         
         if(redis_handler.session[client_id]["client_port"] is not None):
             _p = redis_handler.session[client_id]["client_port"]
-            print("replica connection broken")
-            print("connection with replica@{_p} encounter error")
+            print("replica client {client_id} connection end")
+            print("connection with replica@{_p} end")
 
             print(f"buffer[{_p}] is", str(redis_handler.buffer[_p]))
         #debug
-    finally:
-        print(f"Close connection with MASTER")
+        print(f"Close connection with CLIENT OR REPLICA ")
         writer.close()
         await writer.wait_closed()
 
