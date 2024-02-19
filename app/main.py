@@ -25,10 +25,11 @@ async def handle_replica(reader, writer, redis_handler):
             input_redisobject = redis_handler.parse_input(received_message)
             #for debug
             #print(f"Received: {redis_handler.parsed_input.__repr__()}")
-            output_redisobject = redis_handler.execute_command(client_id=client_id, input_redisobject=input_redisobject)
+            output_redisobject = redis_handler.execute_master_command(client_id=client_id, input_redisobject=input_redisobject)
             #for debug
             #print(f"Response: {redis_handler.parsed_output.__repr__()}")
-            response_message = redis_handler.parse_output(output_redisobject)
+            
+            #response_message = redis_handler.parse_output(output_redisobject)
             #print(f"Response {response_message} to {address}")
             
             # default to response "+PONG\r\n"

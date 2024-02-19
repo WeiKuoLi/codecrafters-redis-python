@@ -14,6 +14,9 @@ class RedisIOHandler:
         self.buffer = BufferMultiQueue() 
         self.session = {} # client_id:uuid -> dict  ->  dict['client_port']   
 
+    def execute_master_command(self, client_id=None, input_redisobject=None, **kwargs):
+        return execute_command(client_id=client_id, input_redisobject=input_redisobject, **kwargs)
+    
     def execute_command(self, client_id=None, input_redisobject=None, **kwargs):
 
         _is_master = self.redis_server.role =='master'
