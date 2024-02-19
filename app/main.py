@@ -128,7 +128,7 @@ async def main():
         replica_reader, replica_writer = await asyncio.open_connection(_master_host,_master_port)
        # redis_replica_handler = RedisIOHandler(redis_server=red)
         replica_comm_task = asyncio.create_task(handle_replica(replica_reader, replica_writer, redis_handler))
-        await replica_comm_task
+        #await replica_comm_task
     async with server:
         print('Server Running')
         await server.serve_forever()

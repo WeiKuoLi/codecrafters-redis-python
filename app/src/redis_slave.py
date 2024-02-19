@@ -95,13 +95,14 @@ class RedisServerSlave(RedisServer):
             response = await reader.readline()
             response_obj = RedisObject.from_string(response.decode())
             print("Response From Server:", response_obj.__repr__())
-            
-            for i in range(10):
+            ''' 
                 # receive rdb
                 response = None
                 while (not response):
                     response = await reader.readline()
                 response_obj = RedisObject.from_string(response.decode('latin-1'))
+            '''
+            #!!get RDB here 
             print(f"Receive rdb{len(response)} From Server:", response_obj.__repr__())
    
     def command_replconf(self, *args, **kwargs):
