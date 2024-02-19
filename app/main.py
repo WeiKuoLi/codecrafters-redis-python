@@ -99,8 +99,17 @@ async def handle_client(reader, writer, redis_handler):
                    asyncio.create_task( redis_handler.process_buffer_commands(reader, writer, client_id=client_id))
              
     except:
+        print("connection with {client_id} encounter error")
+        
+        if(redis_handler.session[client_id]["client_port"] is not None):
+            _p = redis_handler.session[client_id]["client_port"]
+            print("replica connection broken")
+            print("connection with replica@{_p} encounter error")
+
+            print(f"buffer[{_p}] is", str(redis_handler.buffer[_p]))
         #debug
-        #print(f"Close connection with {address}")
+    finally:
+        print(f"Close connection with MASTER")
         writer.close()
         await writer.wait_closed()
 
