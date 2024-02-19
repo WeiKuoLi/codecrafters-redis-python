@@ -95,16 +95,16 @@ class RedisServerSlave(RedisServer):
             response = await reader.readline()
             response_obj = RedisObject.from_string(response.decode())
             print("Response From Server:", response_obj.__repr__())
-            ''' 
-                # receive rdb
-                response = None
-                while (not response):
-                    response = await reader.readline()
-                response_obj = RedisObject.from_string(response.decode('latin-1'))
-                #!!get RDB here 
-                print(f"Receive rdb{len(response)} From Server:", response_obj.__repr__())
+            # receive rdb
+            await asyncio.sleep(2)
             '''
-   
+            response = None
+            while (not response):
+                response = await reader.readline()
+            response_obj = RedisObject.from_string(response.decode('latin-1'))
+            #!!get RDB here 
+            print(f"Receive rdb{len(response)} From Server:", response_obj.__repr__())
+            '''
     def command_replconf(self, *args, **kwargs):
         if(args[0].obj == 'GETACK' or args[0].obj == 'getack'):
             _reply = RedisObject(obj=[], typ='lst')

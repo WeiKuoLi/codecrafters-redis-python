@@ -16,33 +16,39 @@ async def handle_replica(reader, writer, redis_handler):
         await redis_handler.redis_server.hand_shake(reader,writer)
         print("handshake with master was successful")
         while True:
-
+            await asyncio.sleep(2)
+            print('hi')
             received_data = await reader.read(1024)
             if not received_data:
-                continue
-
-            received_message = received_data.decode()
-            print(f"Received {received_message} from master server {address}")
-
+                break
+            try:
+                received_message = received_data.decode('latin-1')
+                print(f"Received {received_message} from master server {address}")
+            except:
+                received_message = "+ping\r\n"
+                print("received message that cannot be decoded")
             input_redisobject = redis_handler.parse_input(received_message)
             #for debug
-            #print(f"Received: {redis_handler.parsed_input.__repr__()}")
-            output_redisobject = redis_handler.execute_master_command(client_id=client_id, input_redisobject=input_redisobject)
+            print(f"Received from master: {redis_handler.parsed_input.__repr__()}")
+            try:
+                output_redisobject = redis_handler.execute_master_command(client_id=client_id, input_redisobject=input_redisobject)
+            except:
+                print("cannot excecute command")
             #for debug
-            #print(f"Response: {redis_handler.parsed_output.__repr__()}")
+            #print(f"Response master: {redis_handler.parsed_output.__repr__()}")
             
             #response_message = redis_handler.parse_output(output_redisobject)
-            #print(f"Response {response_message} to {address}")
+           # print(f"Response master {response_message} to {address}")
             
-            # default to response "+PONG\r\n"
-            #await asyncio.sleep(2)
             
-            writer.write(response_message.encode())
-            await writer.drain()
+          #  writer.write(response_message.encode())
+          #  await writer.drain()
 
     except:
+        print("app.main.handle_replica error")
         #debug
-        #print(f"Close connection with {address}")
+    finally:
+        print(f"Close connection with MASTER")
         writer.close()
         await writer.wait_closed()
 
@@ -77,8 +83,7 @@ async def handle_client(reader, writer, redis_handler):
             response_message = redis_handler.parse_output(output_redisobject)
             #print(f"Response {response_message} to {address}")
             
-            # default to response "+PONG\r\n"
-            #await asyncio.sleep(2)
+            #await asyncio.sleep(3)
             
             writer.write(response_message.encode())
             await writer.drain()
