@@ -23,7 +23,8 @@ async def handle_replica(reader, writer, redis_handler):
                 break
             try:
                 received_message = received_data.decode('latin-1')
-                print(f"Received {received_message} from master server {address}")
+                print(f"recived {len(received_message)}")
+                print(f"Received {received_message} from master server")
             except:
                 received_message = "+ping\r\n"
                 print("received message that cannot be decoded")
@@ -31,7 +32,7 @@ async def handle_replica(reader, writer, redis_handler):
             #for debug
             print(f"Received from master: {redis_handler.parsed_input.__repr__()}")
             try:
-                output_redisobject = redis_handler.execute_master_command(client_id=client_id, input_redisobject=input_redisobject)
+                output_redisobject = redis_handler.execute_master_command(input_redisobject=input_redisobject)
             except:
                 print("cannot excecute command")
             #for debug
