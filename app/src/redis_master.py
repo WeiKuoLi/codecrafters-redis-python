@@ -27,6 +27,7 @@ class RedisServerMaster(RedisServer):
             slave_port = str(args[1].obj)
             self.slave_port.append(slave_port)
             session_client_id = kwargs['client_id']
+            self.redis_io_handler.session[session_client_id]['is_replica'] = True
             self.redis_io_handler.session[session_client_id]['client_port'] = str(args[1].obj)
 
             self.redis_io_handler.buffer[slave_port] = BufferQueue()
