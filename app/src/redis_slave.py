@@ -106,8 +106,8 @@ class RedisServerSlave(RedisServer):
             print(f"Receive rdb{len(response)} From Server:", response_obj.__repr__())
             '''
     def command_replconf(self, *args, **kwargs):
-        if(args[0].obj == 'GETACK' or args[0].obj == 'getack'):
-            _reply = RedisObject(obj=[], typ='lst')
+        if(args[0].obj.lower() == 'getack'):
+            _reply = RedisObject(obj=[], typ='list')
             _reply.obj.append(RedisObject(obj="REPLCONF",typ="bulk_str"))
             _reply.obj.append(RedisObject(obj="ACK",typ="bulk_str"))
             _reply.obj.append(RedisObject(obj="0",typ="bulk_str"))
