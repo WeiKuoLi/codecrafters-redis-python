@@ -130,7 +130,7 @@ async def handle_replica(client_id, reader, writer, redis_handler):
     print(f"buffer[{replica_port}] is", str(redis_handler.buffer[replica_port]))
     
     while True:
-        #print("handle_replica...")
+        print("handle_replica...")
         if(redis_handler.buffer[replica_port].is_empty()):
             #await asyncio.sleep(1)
             pass
