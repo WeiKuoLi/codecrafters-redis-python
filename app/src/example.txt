@@ -1,0 +1,7 @@
+set k v
+ping
+echo hello_world
+get k
+keys * 
+
+

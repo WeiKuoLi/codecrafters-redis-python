@@ -1,70 +1,78 @@
+import unittest
 import uuid
-from  app.src.redisdata import RedisObject
-from  app.src.redisio import RedisIOHandler
-from  app.src.redis_master import RedisServerMaster
-from  app.src.redis_slave import RedisServerSlave
+from app.src.redisdata import RedisObject
+from app.src.redisio import RedisIOHandler
+from app.src.redis_master import RedisServerMaster
+from app.src.redis_slave import RedisServerSlave
 from app.src.buffer import BufferQueue, BufferMultiQueue
-a = RedisObject(obj=[], typ="list")
-b = RedisObject(obj=[], typ="list")
-a1 = RedisObject(obj='SET', typ='bulk_str')
-a2 = RedisObject(obj='key10293', typ='bulk_str')
-a3 = RedisObject(obj='valuevalue', typ='bulk_str')
-a.obj.append(a1)
-a.obj.append(a2)
-a.obj.append(a3)
-print(str(a))
 
-rds_svr = RedisServerMaster()
-r = RedisIOHandler(redis_server=rds_svr)
-assert r.redis_server==rds_svr
-assert rds_svr.redis_io_handler==r
+class TestRedisIOHandler(unittest.TestCase):
+    def setUp(self):
+        self.a = RedisObject(obj=[], typ="list")
+        self.b = RedisObject(obj=[], typ="list")
+        self.a1 = RedisObject(obj='SET', typ='bulk_str')
+        self.a2 = RedisObject(obj='key10293', typ='bulk_str')
+        self.a3 = RedisObject(obj='valuevalue', typ='bulk_str')
+        self.a.obj.append(self.a1)
+        self.a.obj.append(self.a2)
+        self.a.obj.append(self.a3)
+        self.rds_svr = RedisServerMaster()
+        self.r = RedisIOHandler(redis_server=self.rds_svr)
+        self.client_id = str(uuid.uuid4())
+        self.r.session[self.client_id] = {
+            "reader": 'reader',
+            "writer": 'writer',
+            "client_ip": None,
+            "client_port": "6380"
+        }
+        self.r.buffer["6380"] = BufferQueue()
+        self.buffer = BufferMultiQueue()
+        self.buffer[6379] = BufferQueue()
+        self.buffer[6399] = BufferQueue()
 
-assert str(a)=="*3\r\n$3\r\nSET\r\n$8\r\nkey10293\r\n$10\r\nvaluevalue\r\n"
-assert r.parse_input(str(a)) == a
-assert r.parse_output(a) == str(a)
-client_id = str(uuid.uuid4()) 
+    def test_redis_server_master(self):
+        self.assertEqual(self.r.redis_server, self.rds_svr)
+        self.assertEqual(self.rds_svr.redis_io_handler, self.r)
 
-r.session[client_id] = { "reader":'reader',
-                                     "writer": 'writer',
-                                     "client_ip":None,
-                                     "client_port":"6380"}
-r.buffer["6380"]=BufferQueue()
+    def test_redis_object_str(self):
+        expected_str = "*3\r\n$3\r\nSET\r\n$8\r\nkey10293\r\n$10\r\nvaluevalue\r\n"
+        self.assertEqual(str(self.a), expected_str)
 
-assert r.execute_command(input_redisobject=a) == r.parse_input("+OK\r\n")
-assert rds_svr.redis['key10293'].obj == 'valuevalue'
-print('bufferQ  ', (r.buffer["6380"]).__repr__())
-print('bufferQ peek  ', (r.buffer["6380"].peek()).__repr__())
-print('bufferQ size  ', (r.buffer["6380"].size()))
+    def test_parse_input_output(self):
+        self.assertEqual(self.r.parse_input(str(self.a)), self.a)
+        self.assertEqual(self.r.parse_output(self.a), str(self.a))
 
-x = r.buffer["6380"].dequeue()
-assert r.execute_command(input_redisobject=x) == r.parse_input("+OK\r\n")
+    def test_execute_command(self):
+        expected_response = self.r.parse_input("+OK\r\n")
+        self.assertEqual(self.r.execute_command(input_redisobject=self.a), expected_response)
+        self.assertEqual(self.rds_svr.redis['key10293'].obj, 'valuevalue')
 
-rds_svr  = RedisServerSlave(port_number=6380, 
-                            master_host="localhost", 
-                            master_port=6379)
-r = RedisIOHandler(redis_server=rds_svr)
-assert r.redis_server==rds_svr
-assert rds_svr.redis_io_handler==r
+    def test_buffer_operations(self):
+        self.assertEqual((self.r.buffer["6380"]).size(), 0)
+        self.r.buffer["6380"].enqueue(self.a)
+        self.assertEqual((self.r.buffer["6380"].size()), 1)
+        dequeued_item = self.r.buffer["6380"].dequeue()
+        self.assertEqual(dequeued_item, self.a)
 
-assert str(a)=="*3\r\n$3\r\nSET\r\n$8\r\nkey10293\r\n$10\r\nvaluevalue\r\n"
-assert r.parse_input(str(a)) == a
-assert r.parse_output(a) == str(a)
-assert r.execute_command(input_redisobject=a) == r.parse_input("+OK\r\n")
-assert rds_svr.redis['key10293'].obj == 'valuevalue'
+    def test_redis_server_slave(self):
+        rds_svr_slave = RedisServerSlave(port_number=6380, master_host="localhost", master_port=6379)
+        r_slave = RedisIOHandler(redis_server=rds_svr_slave)
+        self.assertEqual(r_slave.redis_server, rds_svr_slave)
+        self.assertEqual(rds_svr_slave.redis_io_handler, r_slave)
 
-buffer = BufferMultiQueue()
-buffer[6379]=BufferQueue()
-buffer[6399]=BufferQueue()
-for k, v in buffer.items():
-    buffer[k].enqueue(a)
-    v.dequeue()
-    buffer[k].enqueue(a)
-    v.enqueue(a)
+    def test_buffer_multi_queue(self):
+        for k, v in self.buffer.items():
+            self.buffer[k].enqueue(self.a)
+            self.assertEqual(v.size(), 1)
+            v.dequeue()
+            self.assertEqual(v.size(), 0)
+            self.buffer[k].enqueue(self.a)
+            v.enqueue(self.a)
+        self.assertEqual(self.buffer[6399].peek(), self.a)
+        self.assertEqual(str(self.buffer[6379].peek()), str(self.a))
+        for k in self.buffer:
+            self.assertEqual((self.buffer[k]).size(), 2)
 
-assert buffer[6399].peek() == a
-assert str(buffer[6379].peek()) == str(a)
-for k in buffer:
-    assert buffer[k].size()==2
+if __name__ == '__main__':
+    unittest.main()
 
-
-print( str(buffer))
