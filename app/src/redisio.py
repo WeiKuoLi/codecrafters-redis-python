@@ -53,11 +53,11 @@ class RedisIOHandler:
                 return output_redisobject
 
         elif input_redisobject.typ == "list":
-            print("input_redisobject is ",str(input_redisobject))       
+            #print("input_redisobject is ",str(input_redisobject))       
             try:
                 _cmd = str(input_redisobject.obj[0].obj)
                 output_redisobject = handler[_cmd](client_id=client_id, command=_cmd, *(input_redisobject.obj[1:]))
-                print(f"output_redisobject line55 in redisio: {str(output_redisobject)}")
+                #print(f"output_redisobject line55 in redisio: {str(output_redisobject)}")
                 return output_redisobject
             except:
                 print("unknown command list: ", str(input_redisobject))
