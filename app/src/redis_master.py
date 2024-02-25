@@ -12,7 +12,6 @@ class RedisServerMaster(RedisServer):
         self.role="master"
         self.replid="8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb"
         self.repl_offset=0
-        self.slave_port = []
 
     def command_info(self, *args, **kwargs):
         if args[0].obj != "replication":
@@ -25,14 +24,13 @@ class RedisServerMaster(RedisServer):
     def command_replconf(self, *args, **kwargs):
         if(args[0].obj == 'listening-port'):
             slave_port = str(args[1].obj)
-            self.slave_port.append(slave_port)
+            #self.slave_port.append(slave_port)
             session_client_id = kwargs['client_id']
             self.redis_io_handler.session[session_client_id]['is_replica'] = True
             self.redis_io_handler.session[session_client_id]['client_port'] = str(args[1].obj)
 
-            self.redis_io_handler.buffer[slave_port] = BufferQueue()
+            self.redis_io_handler.buffer[session_client_id] = BufferQueue()
             
-        print(f"slave port is {self.slave_port}")
         return RedisObject("OK")
 
     def command_psync(self, *args, **kwargs):
@@ -41,10 +39,8 @@ class RedisServerMaster(RedisServer):
 
         print("buffer: ", str(self.redis_io_handler.buffer))
         print("redisiohandler: ", self.redis_io_handler)
-        print("buffer: ", str(self.redis_io_handler.buffer[slave_port]))
-       # self.redis_io_handler.buffer[slave_port].enqueue("send_empty_rdb")
-        self.redis_io_handler.buffer[slave_port].enqueue(RedisObject(obj="send_empty_rdb", typ="str"))
-        #print(f"buffer[{self.slave_port}]: ", str(self.redis_io_handler.buffer[slave_port]))
+        print("buffer: ", str(self.redis_io_handler.buffer[session_client_id]))
+        self.redis_io_handler.buffer[session_client_id].enqueue(RedisObject(obj="send_empty_rdb", typ="str"))
         return RedisObject(obj=f"FULLRESYNC {self.replid} {str(self.repl_offset)}", typ="str")
     
     def command_set(self, *args, **kwargs):

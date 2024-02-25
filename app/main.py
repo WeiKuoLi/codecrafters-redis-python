@@ -101,8 +101,7 @@ async def handle_general_client(reader, writer, redis_handler):
             print("message sent")
             
             if(redis_handler.session[client_id]["is_replica"] ):
-                replica_port = redis_handler.session[client_id]['client_port']
-                if (not redis_handler.buffer[replica_port].is_empty()):
+                if (not redis_handler.buffer[client_id].is_empty()):
                     ## handshake finish, enter handle_replica 
                     break
         # handle interaction according to redis_handler.session[client_id]["is_replica"]
@@ -119,7 +118,7 @@ async def handle_general_client(reader, writer, redis_handler):
             print(f"replica client {client_id} connection end")
             print(f"connection with replica@{_p} end")
 
-            print(f"buffer[{_p}] is", str(redis_handler.buffer[_p]))
+            print(f"buffer[{client_id}] is", str(redis_handler.buffer[client_id]))
         #debug
         print(f"~~~Closing connection~~~ ")
         writer.close()
@@ -129,16 +128,15 @@ async def handle_replica(client_id, reader, writer, redis_handler):
     '''
     We are a master talking to a replica, do not wait reponse before command
     '''
-    replica_port = redis_handler.session[client_id]["client_port"]
-    print(f"buffer[{replica_port}] is", str(redis_handler.buffer[replica_port]))
+    print(f"buffer[{client_id}] is", str(redis_handler.buffer[client_id]))
     
     while True:
         print("handle_replica...")
-        if(redis_handler.buffer[replica_port].is_empty()):
+        if(redis_handler.buffer[client_id].is_empty()):
             await asyncio.sleep(.2)
             pass
         else:
-            print(f"buffer[{replica_port}] is", str(redis_handler.buffer[replica_port]))
+            print(f"buffer[{client_id}] is", str(redis_handler.buffer[client_id]))
             await ( redis_handler.process_buffer_commands(reader, writer, client_id=client_id))
         
         '''

@@ -86,16 +86,15 @@ class RedisIOHandler:
             print("client_id is required")
             return
 
-        _port = self.session[client_id]['client_port']
 
         #print(f"processing replica at port  {_port}") 
         # support buffering for master server only
         assert self.redis_server.role == "master"
         
-        while (not self.buffer[_port].is_empty()):
+        while (not self.buffer[client_id].is_empty()):
             #print(f"{str(self.buffer[_port])}")
             #print(f"<process buffer commands to slave server at port {_port}>")
-            oldest_command_redisobject = self.buffer[_port].dequeue() #dequeue
+            oldest_command_redisobject = self.buffer[client_id].dequeue() #dequeue
             #print(f"<process buffer command {(oldest_command_redisobject).__repr__()}")
             if (oldest_command_redisobject.obj == "send_empty_rdb"):
                 _len = len(EMPTY_RDB)
@@ -105,7 +104,6 @@ class RedisIOHandler:
                 await writer.drain()
             else:# //list
                 _resp_string = str(oldest_command_redisobject)
-                #print(f"send {oldest_command_redisobject.__repr__()} to {_port}")
                 
                 writer.write(_resp_string.encode())
                 await writer.drain()
