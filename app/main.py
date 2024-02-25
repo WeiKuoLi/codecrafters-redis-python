@@ -20,7 +20,6 @@ async def handle_master(reader, writer, redis_handler):
                                          "writer": writer,
                                          "client_ip":None,
                                          "client_port":None}
-    
     try:
         await redis_handler.redis_server.hand_shake(reader,writer)
         print("handshake with master was successful")
@@ -32,19 +31,18 @@ async def handle_master(reader, writer, redis_handler):
                 continue
             try:
                 received_message = received_data.decode('latin-1')
-                print(f"recived {len(received_message)}")
-                print(f"Received {received_message} from master server")
+                print(f"recived {len(received_message)} bytes: ")
+                print(f"{RedisObject.from_string(received_message).__repr__()} from master server")
             except:
                 received_message = "+ping\r\n"
                 print("received message that cannot be decoded")
+
             input_redisobject = redis_handler.parse_input(received_message)
-            #for debug
-            print(f"Received from master: {redis_handler.parsed_input.__repr__()}")
             try:
                 output_redisobject = redis_handler.execute_master_command(client_id=client_id, input_redisobject=input_redisobject)
                 print(output_redisobject.__repr__())
-            except:
-                print("cannot excecute command")
+            except Exception as e:
+                print(f"cannot excecute command, {e}")
             #for debug
             #print(f"Response master: {redis_handler.parsed_output.__repr__()}")
             
@@ -64,7 +62,7 @@ async def handle_master(reader, writer, redis_handler):
         await writer.wait_closed()
 
 
-async def handle_client(reader, writer, redis_handler):
+async def handle_general_client(reader, writer, redis_handler):
     client_id = str(uuid.uuid4()) 
     while (client_id in redis_handler.session):
         client_id = str(uuid.uuid4()) 
@@ -72,13 +70,13 @@ async def handle_client(reader, writer, redis_handler):
     redis_handler.session[client_id] = { "reader":reader,
                                          "writer": writer,
                                          "client_ip":None,
-                                         "client_port":None}
+                                         "client_port":None,
                                          "is_replica":False}
     
     #debug
     #print(f"Connected to {client_id}")
     try:
-        while True:
+        for _round in range(5): # determine whether it is replica within 5 interactions
             received_data = await reader.read(1024)
             if not received_data:
                 break
@@ -99,31 +97,94 @@ async def handle_client(reader, writer, redis_handler):
             
             writer.write(response_message.encode())
             await writer.drain()
-           
-             
-            if(not redis_handler.buffer.is_empty()):
-                print("app.main 88: buffer is not empty", str(redis_handler.buffer))
-            
-            if(isinstance(redis_handler.redis_server, RedisServerMaster) and redis_handler.session[client_id]["client_port"] is not None):
-                _p = redis_handler.session[client_id]["client_port"]
-                print(f"buffer[{_p}] is", str(redis_handler.buffer[_p]))
-                if(  not redis_handler.buffer[_p].is_empty()):
-                   asyncio.create_task( redis_handler.process_buffer_commands(reader, writer, client_id=client_id))
-                      
+            if(redis_handler.session[client_id]["is_replica"] ):
+                replica_port = redis_handler.session[client_id]['client_port']
+                if (not redis_handler.buffer[replica_port].is_empty()):
+                    ## handshake finish, enter handle_replica 
+                    break
+        # handle interaction according to redis_handler.session[client_id]["is_replica"]
+        if(redis_handler.session[client_id]["is_replica"]):
+            await handle_replica(client_id, reader, writer, redis_handler)
+        else:
+            print('handle_normal_client')
+            await handle_normal_client(client_id, reader, writer, redis_handler )
     except:
         print(f"connection with {client_id} encounter error")
     finally:
-        
-        if(redis_handler.session[client_id]["client_port"] is not None):
+        if(redis_handler.session[client_id]["is_replica"]):
             _p = redis_handler.session[client_id]["client_port"]
             print(f"replica client {client_id} connection end")
             print(f"connection with replica@{_p} end")
 
             print(f"buffer[{_p}] is", str(redis_handler.buffer[_p]))
         #debug
-        print(f"Close connection with CLIENT OR REPLICA ")
+        print(f"~~~Closing connection~~~ ")
         writer.close()
         await writer.wait_closed()
+
+async def handle_replica(client_id, reader, writer, redis_handler):
+    '''
+    We are a master talking to a replica, do not wait reponse before command
+    '''
+    replica_port = redis_handler.session[client_id]["client_port"]
+    print(f"buffer[{replica_port}] is", str(redis_handler.buffer[replica_port]))
+    
+    while True:
+
+        if(redis_handler.buffer[replica_port].is_empty()):
+            await asyncio.sleep(2)
+        else:
+            print(f"buffer[{replica_port}] is", str(redis_handler.buffer[replica_port]))
+            await ( redis_handler.process_buffer_commands(reader, writer, client_id=client_id))
+        
+        '''
+        received_data = await reader.read(1024)
+        if not received_data:
+            break
+        
+        received_message = received_data.decode()
+        #print(f"Received {received_message} from {address}")
+
+        input_redisobject = redis_handler.parse_input(received_message)
+            #for debug
+        #print(f"Received: {redis_handler.parsed_input.__repr__()}")
+        output_redisobject = redis_handler.execute_command(client_id=client_id, input_redisobject=input_redisobject)
+        #for debug
+        #print(f"Response: {redis_handler.parsed_output.__repr__()}")
+        response_message = redis_handler.parse_output(output_redisobject)
+        #print(f"Response {response_message} to {address}")
+        
+        #await asyncio.sleep(3)
+        
+        writer.write(response_message.encode())
+        await writer.drain()
+        '''
+         
+    
+async def handle_normal_client(client_id, reader, writer, redis_handler):
+    while True:
+        received_data = await reader.read(1024)
+        if not received_data:
+            break
+        
+        received_message = received_data.decode()
+        #print(f"Received {received_message} from {address}")
+
+        input_redisobject = redis_handler.parse_input(received_message)
+        #for debug
+        #print(f"Received: {redis_handler.parsed_input.__repr__()}")
+        output_redisobject = redis_handler.execute_command(client_id=client_id, input_redisobject=input_redisobject)
+        #for debug
+        #print(f"Response: {redis_handler.parsed_output.__repr__()}")
+        response_message = redis_handler.parse_output(output_redisobject)
+        #print(f"Response {response_message} to {address}")
+        
+        #await asyncio.sleep(3)
+        
+        writer.write(response_message.encode())
+        await writer.drain()
+       
+             
 
 async def main():
     parser = argparse.ArgumentParser()
@@ -155,7 +216,7 @@ async def main():
 
     if(args.dir and args.dbfilename):
         asyncio.create_task(import_rdb_file(redis_server))
-    server = await asyncio.start_server(lambda r,w: handle_client(r, w, redis_handler), 'localhost', port_number)
+    server = await asyncio.start_server(lambda r,w: handle_general_client(r, w, redis_handler), 'localhost', port_number)
     
     if(isinstance(redis_server, RedisServerSlave)):
        # await redis_server.hand_shake()

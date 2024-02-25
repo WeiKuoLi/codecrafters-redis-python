@@ -15,7 +15,8 @@ class RedisIOHandler:
         self.session = {} # client_id:uuid -> dict  ->  dict['client_port']   
 
     def execute_master_command(self, client_id=None, input_redisobject=None, **kwargs):
-        return execute_command(client_id=client_id, input_redisobject=input_redisobject, **kwargs)
+        print("executing commands from master")
+        return self.execute_command(client_id=client_id, input_redisobject=input_redisobject, **kwargs)
     
     def execute_command(self, client_id=None, input_redisobject=None, **kwargs):
 
@@ -64,13 +65,17 @@ class RedisIOHandler:
                 return output_redisobject
             
 
-    async def process_buffer_commands(self, reader, writer, **kwargs):
+    async def process_buffer_commands(self, reader, writer, client_id=None,  **kwargs):
         '''
         clear buffer and process each commands
         '''
         print("CLEARING BUFFER")
         
-        _port = self.session[kwargs['client_id']]['client_port']
+        if(client_id is None):
+            print("client_id is required")
+            return
+
+        _port = self.session[client_id]['client_port']
 
         print(f"processing replica at port  {_port}") 
         # support buffering for master server only

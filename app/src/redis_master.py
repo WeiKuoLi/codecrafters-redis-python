@@ -51,13 +51,13 @@ class RedisServerMaster(RedisServer):
         _res = super().command_set(*args, **kwargs)
         
         command_redisobject = RedisObject(obj=[], typ='list')
-        command_redisobject.obj.append(RedisObject(obj='set', typ='str'))
+        command_redisobject.obj.append(RedisObject(obj='set', typ='bulk_str'))
         for _arg in args:
             command_redisobject.obj.append(_arg)
         print("in master server command_set prepare propagate: ", str(command_redisobject)) 
         for k, v in self.redis_io_handler.buffer.items():
             self.redis_io_handler.buffer[k].enqueue(command_redisobject)
-            print(f"{k} buffered queued: {(self.redis_io_handler.buffer[k]).peek()}")
+            print(f"in command_set: {k} buffered queued: {(self.redis_io_handler.buffer[k]).peek()}")
             #print(f"size {buffer[k].size()} buffer[{k}] set to {str(v.peek())}")
         
         return _res
