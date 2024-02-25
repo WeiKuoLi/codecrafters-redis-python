@@ -177,7 +177,7 @@ async def handle_normal_client(client_id, reader, writer, redis_handler):
         #print(f"Received: {redis_handler.parsed_input.__repr__()}")
         output_redisobject = redis_handler.execute_command(client_id=client_id, input_redisobject=input_redisobject)
         #for debug
-        #print(f"Response: {redis_handler.parsed_output.__repr__()}")
+        print(f"Response: {redis_handler.parsed_output.__repr__()}")
         response_message = redis_handler.parse_output(output_redisobject)
         #print(f"Response {response_message} to {address}")
         
@@ -185,7 +185,8 @@ async def handle_normal_client(client_id, reader, writer, redis_handler):
         
         writer.write(response_message.encode())
         await writer.drain()
-      
+        
+        print("reply sent")
 
              
 
