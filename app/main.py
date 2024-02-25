@@ -184,7 +184,8 @@ async def handle_normal_client(client_id, reader, writer, redis_handler):
         
         writer.write(response_message.encode())
         await writer.drain()
-       
+      
+
              
 
 async def main():
