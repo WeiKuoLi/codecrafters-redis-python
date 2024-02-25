@@ -56,7 +56,7 @@ class RedisIOHandler:
             if(len(input_redisobject.obj) == 1): 
                 _cmd = str(input_redisobject.obj[0].obj[0].obj)
                 output_redisobject = handler[_cmd](client_id=client_id, command=_cmd, *(input_redisobject.obj[0].obj[1:]))
-                print(output_redisobject.__repr__())
+                print('one command: ',output_redisobject.__repr__())
                 return output_redisobject
 
             output_redisobject = RedisObject(obj=[], typ='list')
@@ -64,7 +64,7 @@ class RedisIOHandler:
                 _cmd = str(_obj.obj[0].obj)
                 output_redisobject.obj.append( handler[_cmd](client_id=client_id, command=_cmd, *(_obj.obj[1:])))
 
-            print(output_redisobject.__repr__())
+            print('many commands: ',output_redisobject.__repr__())
             return output_redisobject
 
         except:
