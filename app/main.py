@@ -45,13 +45,13 @@ async def handle_master(reader, writer, redis_handler):
                 print(f"cannot excecute command, {e}")
             #for debug
             #print(f"Response master: {redis_handler.parsed_output.__repr__()}")
-            
-            #response_message = redis_handler.parse_output(output_redisobject)
-           # print(f"Response master {response_message} to {address}")
-            
-            
-          #  writer.write(response_message.encode())
-          #  await writer.drain()
+            if(input_redisobject.obj[0].obj[0].obj.lower()=='replconf') 
+                response_message = redis_handler.parse_output(output_redisobject)
+               # print(f"Response master {response_message} to {address}")
+                
+                
+                writer.write(response_message.encode())
+                await writer.drain()
 
     except:
         print("app.main.handle_master error")
