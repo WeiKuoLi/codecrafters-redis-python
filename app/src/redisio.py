@@ -69,7 +69,7 @@ class RedisIOHandler:
         '''
         clear buffer and process each commands
         '''
-        print("CLEARING BUFFER")
+        #print("CLEARING BUFFER")
         
         if(client_id is None):
             print("client_id is required")
@@ -89,19 +89,19 @@ class RedisIOHandler:
             if (oldest_command_redisobject.obj == "send_empty_rdb"):
                 _len = len(EMPTY_RDB)
                 _empty_rdb_resp_encode = ('$' + str(_len) + "\r\n").encode() + EMPTY_RDB 
-                print("rdb ", _empty_rdb_resp_encode.decode('latin-1'))
+               # print("rdb ", _empty_rdb_resp_encode.decode('latin-1'))
                 writer.write(_empty_rdb_resp_encode)
                 await writer.drain()
             else:# //list
                 _resp_string = str(oldest_command_redisobject)
-                print(f"send {oldest_command_redisobject.__repr__()} to {_port}")
+                #print(f"send {oldest_command_redisobject.__repr__()} to {_port}")
                 
                 writer.write(_resp_string.encode())
                 await writer.drain()
-                print("DELAY BUFFER CLEARING .2s FOR TESTING")
+                #print("DELAY BUFFER CLEARING .2s FOR TESTING")
                 await asyncio.sleep(.2)
                 
-        print("END CLEARING BUFFER")
+        #print("END CLEARING BUFFER")
     def parse_input(self, input_string):
         '''
         redis RESP input_string -> self.parsed_input as a RedisObject
