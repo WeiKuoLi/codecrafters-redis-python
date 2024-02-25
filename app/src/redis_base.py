@@ -27,7 +27,6 @@ class RedisServer:
             return RedisObject.from_string("")
     
     def command_set(self, *args, **kwargs):
-        print(args, kwargs)
         try:
             _key = args[0].obj
             
