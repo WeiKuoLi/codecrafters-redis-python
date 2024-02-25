@@ -91,7 +91,7 @@ async def handle_general_client(reader, writer, redis_handler):
             #for debug
             print(f"Response: {output_redisobject.__repr__()}")
             response_message = redis_handler.parse_output(output_redisobject)
-            print(f"Response {response_message} to {address}")
+            print(f"Response {response_message} to {client_id}")
             
             #await asyncio.sleep(3)
             
