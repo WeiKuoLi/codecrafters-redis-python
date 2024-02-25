@@ -38,6 +38,7 @@ async def handle_master(reader, writer, redis_handler):
                 print("received message that cannot be decoded")
 
             input_redisobject = redis_handler.parse_input(received_message)
+            output_redisobject = RedisObject(obj="",typ="null_bulk_str")
             try:
                 output_redisobject = redis_handler.execute_master_command(client_id=client_id, input_redisobject=input_redisobject)
                 print("REPLICA OUTPUT TO MASTER: ",output_redisobject.__repr__())
