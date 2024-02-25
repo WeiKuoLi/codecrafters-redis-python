@@ -77,12 +77,12 @@ async def handle_general_client(reader, writer, redis_handler):
     #print(f"Connected to {client_id}")
     try:
         for _round in range(5): # determine whether it is replica within 5 interactions
-            received_data = await reader.read(2048)
+            received_data = await reader.read(1024)
             if not received_data:
                 break
             
             received_message = received_data.decode()
-            #print(f"Received {received_message} from {address}")
+            print(f"Received {received_message} from {address}")
 
             input_redisobject = redis_handler.parse_input(received_message)
             #for debug
