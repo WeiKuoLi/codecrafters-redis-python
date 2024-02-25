@@ -55,32 +55,66 @@ class RedisObject:
         '''
         parse the string and return an instance 
         '''
-        _obj, _ = cls.recursive_parse_string(string)
-        return _obj
-    
+        return cls.simple_parse_string(string)
+        
+   
     @classmethod
     def simple_parse_string(cls, string):
-        
-        #no nested structure
-        
-        _resp_list = string.split("\r\n")
-        head = _resp_list[0]
-        try:
-            if(head[0] == '+'):
-                return cls(obj=head[1:], typ="str")
-            elif(head[0] == '$'):
-                _str_len = int(head[1:])
-                _len_head = len(head)
-                _str = string[_len_head + 2: _len_head + 2+_str_len]
-                return cls(obj=_str, typ="bulk_str" )
-            elif(head[0] == '*'):
-                _redis_list = []
-                for _body in _resp_lst[1:]:
-                    _redis_list.append(cls.simple_parse_string(_body))
-                return cls(obj=_redis_list, typ="list")
-        except:
-            pass
-        return cls(obj="", typ="null_bulk_str") 
+        resp_list = []
+        _len = len(string)
+        _i, _j = 0, 0
+        _arr_num = 0
+        _num = 0
+        while(_i < _len and _j < _len):
+            if(string[_i] == '*'):
+                # array
+                _j = _i + 1
+                while(string[_j] != '\n'):
+                    _j = _j + 1
+                _arr_num = int(string[_i+1:_j-1])
+                resp_list.append(cls(obj=[], typ='list'))
+                #print(f"an array of{_arr_num}")
+                _j = _j + 1
+                _i = _j
+            elif (string[_i] == '+'):
+                # simple string
+                _j = _i + 1
+                while(string[_j] != '\n'):
+                    _j = _j + 1
+                _obj =cls(obj=string[_i+1:_j-1],typ='str')
+                #print(f"a string = {_obj}")
+                if(_arr_num == 0):
+                    resp_list.append(cls(obj=[_obj],typ='list'))
+                else:
+                    resp_list[-1].obj.append(_obj)
+                    _arr_num -= 1
+                _j = _j + 1
+                _i = _j
+            elif (string[_i] == '$'):
+                # bulk string
+                _j = _i + 1
+                while(string[_j] != '\n'):
+                    _j = _j + 1
+                _num = int(string[_i+1:_j-1])
+                _j = _j + 1
+                _i = _j
+                
+                _obj=cls(obj=string[_i:_i+_num],typ='bulk_str')
+                #print(f"a bulk_str={_obj}")
+                if(_arr_num == 0):
+                    resp_list.append(cls(obj=[_obj],typ='list'))
+                else:
+                    resp_list[-1].obj.append(_obj)
+                    _arr_num -= 1
+
+                _i = _i + _num + 2
+                _j = _i
+            else:
+                _i = _i + 1
+                _j = _i
+        return cls(obj=resp_list,typ='list')                                 
+
+
     
     @classmethod
     def recursive_parse_string(cls, string):

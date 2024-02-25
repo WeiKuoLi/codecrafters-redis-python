@@ -1,7 +1,6 @@
-set k v
+set k v set k2 v2 set k3 v3
 ping
 echo hello_world
 get k
 keys * 
-
 
