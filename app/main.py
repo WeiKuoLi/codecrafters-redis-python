@@ -45,7 +45,7 @@ async def handle_master(reader, writer, redis_handler):
                 print(f"cannot excecute command, {e}")
             #for debug
             #print(f"Response master: {redis_handler.parsed_output.__repr__()}")
-            if(output_redisobject.typ == 'list' and output_redisobject.obj[0].obj.lower()=='replconf'):
+            if(output_redisobject.typ == 'list' and output_redisobject.obj!=[]):
                 response_message = redis_handler.parse_output(output_redisobject)
                 print(f"Response master {response_message}")
                 
