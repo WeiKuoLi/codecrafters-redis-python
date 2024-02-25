@@ -59,7 +59,7 @@ class RedisObject:
         
    
     @classmethod
-    def simple_parse_string(cls, string):
+    def parse_string_for_execution(cls, string):
         resp_list = []
         _len = len(string)
         _i, _j = 0, 0
