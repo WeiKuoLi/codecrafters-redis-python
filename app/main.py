@@ -40,7 +40,7 @@ async def handle_master(reader, writer, redis_handler):
             input_redisobject = redis_handler.parse_input(received_message)
             try:
                 output_redisobject = redis_handler.execute_master_command(client_id=client_id, input_redisobject=input_redisobject)
-                print(output_redisobject.__repr__())
+                print("REPLICA OUTPUT TO MASTER: ",output_redisobject.__repr__())
             except Exception as e:
                 print(f"cannot excecute command, {e}")
             #for debug
