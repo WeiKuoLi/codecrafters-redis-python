@@ -51,10 +51,10 @@ async def handle_master(reader, writer, redis_handler):
                 response_message = redis_handler.parse_output(output_redisobject)
                 print(f"Response master {response_message}")
                 
-            '''
             reponse_message="*3\r\n$8\r\nREPLCONF\r\n$3\r\nACK\r\n$1\r\n0\r\n"
             writer.write(response_message.encode())
             await writer.drain()
+            '''
     except:
         print("app.main.handle_master error")
         #debug
