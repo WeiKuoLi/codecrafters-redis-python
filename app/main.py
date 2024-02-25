@@ -89,6 +89,7 @@ async def handle_general_client(reader, writer, redis_handler):
             print(f"Received: {input_redisobject.__repr__()}")
             output_redisobject = redis_handler.execute_command(client_id=client_id, input_redisobject=input_redisobject)
             #for debug
+            print(redis_handler.redis_server.redis)
             print(f"Response: {output_redisobject.__repr__()}")
             response_message = redis_handler.parse_output(output_redisobject)
             print(f"Response {response_message} to {client_id}")
