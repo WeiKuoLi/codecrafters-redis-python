@@ -117,7 +117,7 @@ class RedisIOHandler:
         '''
         redis RESP input_string -> self.parsed_input as a RedisObject
         '''
-        return RedisObject.from_string(input_string)
+        return RedisObject.simple_parse_string(input_string)
 
     def parse_output(self, output_redisobject):
         '''

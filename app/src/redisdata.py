@@ -55,7 +55,7 @@ class RedisObject:
         '''
         parse the string and return an instance 
         '''
-        return cls.simple_parse_string(string)
+        return cls.recursive_parse_string(string)[0]
         
    
     @classmethod
@@ -65,6 +65,9 @@ class RedisObject:
         _i, _j = 0, 0
         _arr_num = 0
         _num = 0
+        if ((_len == 0) or string == "\r\n"):
+            return cls(obj="", typ="null_bulk_str")
+
         while(_i < _len and _j < _len):
             if(string[_i] == '*'):
                 # array
@@ -112,6 +115,7 @@ class RedisObject:
             else:
                 _i = _i + 1
                 _j = _i
+        
         return cls(obj=resp_list,typ='list')                                 
 
 
