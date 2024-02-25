@@ -55,6 +55,9 @@ class RedisIOHandler:
         try:
             if(len(input_redisobject.obj) == 1): 
                 _cmd = str(input_redisobject.obj[0].obj[0].obj)
+                print(f"_cmd is {_cmd}")
+
+                print(f"args: {input_redisobject.obj[0].obj[1:]}")
                 output_redisobject = handler[_cmd](client_id=client_id, command=_cmd, *(input_redisobject.obj[0].obj[1:]))
                 print('one command: ',output_redisobject.__repr__())
                 return output_redisobject
