@@ -77,7 +77,7 @@ async def handle_general_client(reader, writer, redis_handler):
     #print(f"Connected to {client_id}")
     try:
         for _round in range(5): # determine whether it is replica within 5 interactions
-            received_data = await reader.read(1024)
+            received_data = await reader.read(2048)
             if not received_data:
                 break
             
@@ -177,7 +177,7 @@ async def handle_normal_client(client_id, reader, writer, redis_handler):
         #print(f"Received: {redis_handler.parsed_input.__repr__()}")
         output_redisobject = redis_handler.execute_command(client_id=client_id, input_redisobject=input_redisobject)
         #for debug
-        print(f"Response: {redis_handler.parsed_output.__repr__()}")
+        #print(f"Response: {redis_handler.parsed_output.__repr__()}")
         response_message = redis_handler.parse_output(output_redisobject)
         #print(f"Response {response_message} to {address}")
         
@@ -186,7 +186,7 @@ async def handle_normal_client(client_id, reader, writer, redis_handler):
         writer.write(response_message.encode())
         await writer.drain()
         
-        print("reply sent")
+        #print("reply sent")
 
              
 
