@@ -28,7 +28,7 @@ async def handle_master(reader, writer, redis_handler):
             #print('hi')
             received_data = await reader.read(1024)
             if not received_data:
-                continue
+                break
             try:
                 received_message = received_data.decode('latin-1')
                 print(f"recived {len(received_message)} bytes: ")

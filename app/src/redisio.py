@@ -95,8 +95,12 @@ class RedisIOHandler:
             else:# //list
                 _resp_string = str(oldest_command_redisobject)
                 print(f"send {oldest_command_redisobject.__repr__()} to {_port}")
+                
                 writer.write(_resp_string.encode())
                 await writer.drain()
+                print("DELAY BUFFER CLEARING .2s FOR TESTING")
+                await asyncio.sleep(.2)
+                
         print("END CLEARING BUFFER")
     def parse_input(self, input_string):
         '''

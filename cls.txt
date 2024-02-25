@@ -1,0 +1,4 @@
+set key1 val1
+set key2 val2
+set key3 val3
+set key4 val4
