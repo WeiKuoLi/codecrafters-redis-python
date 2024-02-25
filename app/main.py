@@ -82,7 +82,7 @@ async def handle_general_client(reader, writer, redis_handler):
                 break
             
             received_message = received_data.decode()
-            print(f"Received {received_message} from {address}")
+            print(f"Received {received_message} from {client_id}")
 
             input_redisobject = redis_handler.parse_input(received_message)
             #for debug
