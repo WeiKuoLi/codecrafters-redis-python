@@ -82,14 +82,14 @@ async def handle_general_client(reader, writer, redis_handler):
                 break
             
             received_message = received_data.decode()
-            #print(f"Received {received_message} from {address}")
+            print(f"Received {received_message} from {client_id}")
 
             input_redisobject = redis_handler.parse_input(received_message)
             #for debug
-            #print(f"Received: {redis_handler.parsed_input.__repr__()}")
+            print(f"Received: {redis_handler.parsed_input.__repr__()}")
             output_redisobject = redis_handler.execute_command(client_id=client_id, input_redisobject=input_redisobject)
             #for debug
-            #print(f"Response: {redis_handler.parsed_output.__repr__()}")
+            print(f"Response: {redis_handler.parsed_output.__repr__()}")
             response_message = redis_handler.parse_output(output_redisobject)
             #print(f"Response {response_message} to {address}")
             
@@ -97,6 +97,9 @@ async def handle_general_client(reader, writer, redis_handler):
             
             writer.write(response_message.encode())
             await writer.drain()
+            
+            print("message sent")
+            
             if(redis_handler.session[client_id]["is_replica"] ):
                 replica_port = redis_handler.session[client_id]['client_port']
                 if (not redis_handler.buffer[replica_port].is_empty()):
@@ -185,7 +188,8 @@ async def handle_normal_client(client_id, reader, writer, redis_handler):
         
         writer.write(response_message.encode())
         await writer.drain()
-      
+        
+        #print("reply sent")
 
              
 

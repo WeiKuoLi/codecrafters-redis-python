@@ -98,8 +98,8 @@ class RedisIOHandler:
                 
                 writer.write(_resp_string.encode())
                 await writer.drain()
-                #print("DELAY BUFFER CLEARING .2s FOR TESTING")
-                await asyncio.sleep(.2)
+                #print("DELAY BUFFER CLEARING .1s FOR TESTING")
+                await asyncio.sleep(.1)
                 
         #print("END CLEARING BUFFER")
     def parse_input(self, input_string):
