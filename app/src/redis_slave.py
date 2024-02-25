@@ -96,7 +96,7 @@ class RedisServerSlave(RedisServer):
             response_obj = RedisObject.from_string(response.decode())
             print("Response From Server:", response_obj.__repr__())
             # receive rdb
-            await asyncio.sleep(2)
+            #await asyncio.sleep(2)
             '''
             response = None
             while (not response):
