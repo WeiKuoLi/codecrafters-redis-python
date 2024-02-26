@@ -13,7 +13,7 @@ from app.src.rdb import import_rdb_file
 
 async def handle_master(reader, writer, redis_handler):
     client_id = str(uuid.uuid4()) 
-    #_update_replica_ack = False
+    _update_replica_ack = False
     while (client_id in redis_handler.session):
         client_id = str(uuid.uuid4()) 
     
@@ -43,7 +43,7 @@ async def handle_master(reader, writer, redis_handler):
             try:
                 output_redisobject = redis_handler.execute_master_command(client_id=client_id, input_redisobject=input_redisobject)
                 print("REPLICA OUTPUT TO MASTER: ",output_redisobject.__repr__())
-               # _update_replica_ack = True
+                _update_replica_ack = True
             except Exception as e:
                 print(f"cannot excecute command, {e}")
             #for debug
@@ -60,9 +60,8 @@ async def handle_master(reader, writer, redis_handler):
                    pass
             ''' 
             ''' 
-            #if(_update_replica_ack):
-            #    pass
-                #redis_handler.redis_server.ack += len(received_data)
+            if(_update_replica_ack):
+                redis_handler.redis_server.ack += len(received_data)
     except:
         print("app.main.handle_master error")
         #debug
