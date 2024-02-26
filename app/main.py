@@ -57,7 +57,8 @@ async def handle_master(reader, writer, redis_handler):
                 writer.write(response_message.encode())
                 await writer.drain()
             if(_update_replica_ack):
-                redis_handler.redis_server.ack += len(received_data)
+                pass
+                #redis_handler.redis_server.ack += len(received_data)
     except:
         print("app.main.handle_master error")
         #debug
