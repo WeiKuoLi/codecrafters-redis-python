@@ -13,6 +13,7 @@ from app.src.rdb import import_rdb_file
 
 async def handle_master(reader, writer, redis_handler):
     client_id = str(uuid.uuid4()) 
+    _update_replica_ack = False
     while (client_id in redis_handler.session):
         client_id = str(uuid.uuid4()) 
     
@@ -42,6 +43,7 @@ async def handle_master(reader, writer, redis_handler):
             try:
                 output_redisobject = redis_handler.execute_master_command(client_id=client_id, input_redisobject=input_redisobject)
                 print("REPLICA OUTPUT TO MASTER: ",output_redisobject.__repr__())
+                _update_replica_ack = True
             except Exception as e:
                 print(f"cannot excecute command, {e}")
             #for debug
@@ -51,9 +53,11 @@ async def handle_master(reader, writer, redis_handler):
                 response_message = redis_handler.parse_output(output_redisobject)
                 print(f"Response master {response_message}")
                 
-            #reponse_message="*3\r\n$8\r\nREPLCONF\r\n$3\r\nACK\r\n$1\r\n0\r\n"
+                #reponse_message="*3\r\n$8\r\nREPLCONF\r\n$3\r\nACK\r\n$1\r\n0\r\n"
                 writer.write(response_message.encode())
                 await writer.drain()
+            if(_update_replica_ack):
+                redis_handler.redis_server.ack += len(received_data)
     except:
         print("app.main.handle_master error")
         #debug

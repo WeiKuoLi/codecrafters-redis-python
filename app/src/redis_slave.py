@@ -16,7 +16,8 @@ class RedisServerSlave(RedisServer):
 
         self.master_replid = "?"
         self.master_repl_offset = -1
-    
+        
+        self.ack = 0
     async def hand_shake(self, reader, writer):
         try:
             print("open connection")
@@ -110,6 +111,6 @@ class RedisServerSlave(RedisServer):
             _reply = RedisObject(obj=[], typ='list')
             _reply.obj.append(RedisObject(obj="REPLCONF",typ="bulk_str"))
             _reply.obj.append(RedisObject(obj="ACK",typ="bulk_str"))
-            _reply.obj.append(RedisObject(obj="0",typ="bulk_str"))
+            _reply.obj.append(RedisObject(obj=f"{self.ack}",typ="bulk_str"))
             return _reply
         return RedisObject(obj="", typ="null_bulk_str") 
