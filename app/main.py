@@ -50,6 +50,7 @@ async def handle_master(reader, writer, redis_handler):
             #for debug
             #print(f"Response master: {redis_handler.parsed_output.__repr__()}")
             
+            ''' stage 13 often fail cause of this block 
             try:
                 if(_update_replica_ack and output_redisobject.typ == 'list'):
                     response_message = redis_handler.parse_output(output_redisobject)
@@ -60,7 +61,6 @@ async def handle_master(reader, writer, redis_handler):
                     await writer.drain()
             except:
                    pass
-            ''' stage 13 often fail cause of this block 
             ''' 
             if(_update_replica_ack):
                 redis_handler.redis_server.ack += len(received_data)
